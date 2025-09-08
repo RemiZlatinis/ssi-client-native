@@ -7,24 +7,29 @@ export default function WelcomeScreen() {
   const handleLogin = () => {
     // After a successful login, you would replace the navigation stack
     // to prevent the user from going back to the welcome screen.
-    router.replace("/overview");
+    router.replace("/");
   };
 
   return (
-    <AppScreen>
+    <AppScreen style={styles.screen}>
       <Text style={styles.title}>Welcome!</Text>
       <Text style={styles.subtitle}>
         Imagine two input fields for username and password.
       </Text>
 
       <View style={styles.buttonContainer}>
-        <Button title="Login and Go to Overview" onPress={handleLogin} />
+        <Button title="Login (Mock)" onPress={handleLogin} />
       </View>
     </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    padding: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   title: {
     fontSize: 28,
     fontWeight: "bold",
