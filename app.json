@@ -11,18 +11,36 @@
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#e8f2f7"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "userInterfaceStyle": "automatic",
+      "splash": {
+        "image": "./assets/images/splash-icon.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#e8f2f7",
+        "dark": {
+          "backgroundColor": "#091620"
+        }
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#e8f2f7"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.remizlatinis.ssiclientmobile"
+      "package": "com.remizlatinis.ssiclientmobile",
+      "userInterfaceStyle": "automatic",
+      "splash": {
+        "image": "./assets/images/splash-icon.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#e8f2f7",
+        "dark": {
+          "backgroundColor": "#091620"
+        }
+      }
     },
     "web": {
       "bundler": "metro",
