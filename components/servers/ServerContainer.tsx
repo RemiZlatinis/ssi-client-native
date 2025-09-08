@@ -1,3 +1,5 @@
+import { Server } from "@/types";
+import { Entypo } from "@expo/vector-icons";
 import { useState } from "react";
 import {
   ImageBackground,
@@ -6,9 +8,12 @@ import {
   Text,
   View,
 } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
-import { Server } from "@/types";
-import { Entypo } from "@expo/vector-icons";
 import ServerService from "./ServerService";
 import StatusIcon from "./StatusIcon";
 
@@ -20,8 +25,17 @@ interface ServerContainerProps {
 
 function ServerContainer({ server }: ServerContainerProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [bodyHeight, setBodyHeight] = useState(0);
+  const height = useSharedValue(0);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      height: height.value,
+    };
+  });
 
   const toggleExpand = () => {
+    height.value = withTiming(isExpanded ? 0 : bodyHeight, { duration: 300 });
     setIsExpanded(!isExpanded);
   };
 
@@ -42,25 +56,32 @@ function ServerContainer({ server }: ServerContainerProps) {
           color="#37A9E1"
         />
       </Pressable>
-      {isExpanded && (
-        <View style={styles.body}>
-          <ServerService
-            name="Uptime"
-            status="OK"
-            lastUpdate={new Date(Date.now() - 1000 * 30)}
-          />
-          <ServerService
-            name="CPU Usage"
-            status="UPDATE"
-            lastUpdate={new Date(Date.now() - 1000 * 60 * 5)}
-          />
-          <ServerService
-            name="Memory"
-            status="ERROR"
-            lastUpdate={new Date(Date.now() - 1000 * 60 * 60 * 2)}
-          />
+      <Animated.View style={[styles.animatedContainer, animatedStyle]}>
+        <View
+          style={{ position: "absolute", width: "100%" }}
+          onLayout={(event) => {
+            setBodyHeight(event.nativeEvent.layout.height);
+          }}
+        >
+          <View style={styles.body}>
+            <ServerService
+              name="Uptime"
+              status="OK"
+              lastUpdate={new Date(Date.now() - 1000 * 30)}
+            />
+            <ServerService
+              name="CPU Usage"
+              status="UPDATE"
+              lastUpdate={new Date(Date.now() - 1000 * 60 * 5)}
+            />
+            <ServerService
+              name="Memory"
+              status="ERROR"
+              lastUpdate={new Date(Date.now() - 1000 * 60 * 60 * 2)}
+            />
+          </View>
         </View>
-      )}
+      </Animated.View>
     </View>
   );
 }
@@ -79,6 +100,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 60,
     padding: 10,
+    zIndex: 1,
+  },
+  animatedContainer: {
+    overflow: "hidden",
   },
   body: {
     paddingHorizontal: 10,
