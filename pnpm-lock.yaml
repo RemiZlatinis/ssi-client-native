@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@expo-google-fonts/poppins':
+        specifier: ^0.4.0
+        version: 0.4.0
       '@expo/vector-icons':
         specifier: ^14.1.0
         version: 14.1.0(expo-font@13.3.2(expo@53.0.22(@babel/core@7.28.4)(@expo/metro-runtime@5.0.4(react-native@0.79.6(@babel/core@7.28.4)(@types/react@19.0.14)(react@19.0.0)))(react-native@0.79.6(@babel/core@7.28.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react@19.0.0))(react-native@0.79.6(@babel/core@7.28.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
@@ -594,6 +597,9 @@ packages:
 
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
+
+  '@expo-google-fonts/poppins@0.4.0':
+    resolution: {integrity: sha512-mY+z56ai1p01EltWCPEDc2EZR+yq7qAMpgDa+SP16j3vwETOLG3pl+W74oUhZayHw0uYdQjTXkm4ZO4QvX1I7w==}
 
   '@expo/cli@0.24.21':
     resolution: {integrity: sha512-DT6K9vgFHqqWL/19mU1ofRcPoO1pn4qmgi76GtuiNU4tbBe/02mRHwFsQw7qRfFAT28If5e/wiwVozgSuZVL8g==}
@@ -4284,6 +4290,8 @@ snapshots:
       '@babel/helper-validator-identifier': 7.27.1
 
   '@bcoe/v8-coverage@0.2.3': {}
+
+  '@expo-google-fonts/poppins@0.4.0': {}
 
   '@expo/cli@0.24.21':
     dependencies:

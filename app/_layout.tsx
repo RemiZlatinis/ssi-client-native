@@ -1,3 +1,7 @@
+import {
+  Poppins_400Regular,
+  Poppins_500Medium,
+} from "@expo-google-fonts/poppins";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
   DarkTheme,
@@ -28,6 +32,8 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     BrunoAce: require("../assets/fonts/BrunoAce-Regular.ttf"),
+    Poppins: Poppins_400Regular,
+    "Poppins-Medium": Poppins_500Medium,
     ...FontAwesome.font,
   });
 

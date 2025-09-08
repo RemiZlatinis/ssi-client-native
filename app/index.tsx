@@ -9,6 +9,7 @@ import {
 import { FontAwesome6 } from "@expo/vector-icons";
 import { router } from "expo-router";
 import AppScreen from "@/components/containers/AppScreen";
+import ServerContainer from "@/components/servers/ServerContainer";
 
 export default function OverviewScreen() {
   console.log("OverviewScreen");
@@ -28,9 +29,15 @@ export default function OverviewScreen() {
 
       {/* Content */}
       <View style={styles.container}>
-        <Text style={styles.title}>Overview</Text>
-        <View style={styles.separator} />
-        <Text>This is your main application overview screen.</Text>
+        <ServerContainer
+          server={{ id: "1", name: "Home Lab - Main Server", status: "OK" }}
+        />
+        <ServerContainer
+          server={{ id: "2", name: "My NAS", status: "UPDATE" }}
+        />
+        <ServerContainer
+          server={{ id: "3", name: "Server Name", status: "ERROR" }}
+        />
       </View>
 
       {/* Action Button */}
@@ -52,14 +59,15 @@ export default function OverviewScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 15,
   },
   headerContainer: {
+    paddingHorizontal: 15,
     flexDirection: "row",
     paddingTop: StatusBar.currentHeight,
     backgroundColor: "#185E81",
     alignItems: "center",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
   },
   headerItemContainer: {
     width: 40,
