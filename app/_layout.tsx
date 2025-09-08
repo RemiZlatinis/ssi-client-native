@@ -1,4 +1,5 @@
 import {
+  Poppins_300Light,
   Poppins_400Regular,
   Poppins_500Medium,
 } from "@expo-google-fonts/poppins";
@@ -32,6 +33,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     BrunoAce: require("../assets/fonts/BrunoAce-Regular.ttf"),
+    "Poppins-Light": Poppins_300Light,
     Poppins: Poppins_400Regular,
     "Poppins-Medium": Poppins_500Medium,
     ...FontAwesome.font,

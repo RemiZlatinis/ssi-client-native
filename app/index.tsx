@@ -36,7 +36,10 @@ export default function OverviewScreen() {
           server={{ id: "2", name: "My NAS", status: "UPDATE" }}
         />
         <ServerContainer
-          server={{ id: "3", name: "Server Name", status: "ERROR" }}
+          server={{ id: "3", name: "Node 1", status: "ERROR" }}
+        />
+        <ServerContainer
+          server={{ id: "4", name: "Node 2", status: "ERROR" }}
         />
       </View>
 

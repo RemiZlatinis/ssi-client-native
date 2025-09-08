@@ -1,4 +1,4 @@
-import { Image, StyleSheet } from "react-native";
+import { Image, ImageStyle } from "react-native";
 
 import { Status } from "@/types";
 
@@ -10,23 +10,24 @@ const StatusIconMap: Record<Exclude<Status, null>, ImageData> = {
   ERROR: require("@/assets/icons/error.png"),
 };
 
-function StatusIcon({ status, size = 24 }: { status: Status; size?: number }) {
+function StatusIcon({
+  status,
+  size = 24,
+  styles,
+}: {
+  size?: number;
+  status: Status;
+  styles?: ImageStyle;
+}) {
   if (status === null) return null;
 
   return (
     <Image
       source={StatusIconMap[status]}
-      style={[styles.icon, { width: size, height: size }]}
+      style={[styles, { width: size, height: size }]}
       resizeMode="contain"
     />
   );
 }
-
-const styles = StyleSheet.create({
-  icon: {
-    position: "absolute",
-    bottom: 0,
-  },
-});
 
 export default StatusIcon;
