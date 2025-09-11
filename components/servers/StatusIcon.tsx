@@ -1,5 +1,4 @@
-import { Image, ImageStyle } from "react-native";
-
+import { Image, ImageStyle } from "expo-image";
 import { Status } from "@/types";
 
 const StatusIconMap: Record<Exclude<Status, null>, ImageData> = {
@@ -25,7 +24,7 @@ function StatusIcon({
     <Image
       source={StatusIconMap[status]}
       style={[styles, { width: size, height: size }]}
-      resizeMode="contain"
+      contentFit="contain"
     />
   );
 }

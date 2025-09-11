@@ -1,19 +1,14 @@
-import { Server } from "@/types";
 import { Entypo } from "@expo/vector-icons";
+import { ImageBackground } from "expo-image";
 import { useState } from "react";
-import {
-  ImageBackground,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
 
+import { Server } from "@/types";
 import ServerService from "./ServerService";
 import StatusIcon from "./StatusIcon";
 
@@ -45,7 +40,7 @@ function ServerContainer({ server }: ServerContainerProps) {
         <ImageBackground
           source={ServerIcon}
           style={styles.serverIcon}
-          resizeMode="contain"
+          contentFit="contain"
         >
           <StatusIcon status={server.status} styles={styles.serverStatusIcon} />
         </ImageBackground>
