@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
     fontFamily: "BrunoAce",
     fontSize: 24,
     textAlign: "center",
+    color: "#fff",
   },
 });
 

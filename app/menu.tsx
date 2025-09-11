@@ -92,11 +92,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: "BrunoAce",
     textAlign: "center",
+    color: "#E8F2F7",
   },
   closeButton: {
     position: "absolute",
     top: (StatusBar.currentHeight || 0) + 15,
     right: 20,
+    color: "#E8F2F7",
   },
 
   // User Info
@@ -117,6 +119,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: "Poppins-Medium",
     fontSize: 24,
+    color: "#E8F2F7",
   },
 
   separator: {
@@ -138,9 +141,9 @@ const styles = StyleSheet.create({
     color: "#185E81",
   },
   menuItemText: {
-    fontFamily: "Poppins-Regular",
+    fontFamily: "Poppins",
     fontSize: 18,
-    color: "#333",
+    color: "#E8F2F7",
   },
   logoutButton: {
     marginBottom: 60,

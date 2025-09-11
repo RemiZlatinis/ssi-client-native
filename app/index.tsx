@@ -30,7 +30,7 @@ export default function OverviewScreen() {
         <Text style={styles.header}>Service Status Indicator</Text>
         <View style={styles.headerItemContainer}>
           <Pressable onPress={() => router.push("/menu")}>
-            <FontAwesome6 name="user-circle" size={32} color="black" />
+            <FontAwesome6 name="user-circle" size={32} color="#fff" />
           </Pressable>
         </View>
       </View>
@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 16,
+    color: "#fff",
     fontFamily: "BrunoAce",
     paddingVertical: 16,
   },

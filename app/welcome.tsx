@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     fontFamily: "BrunoAce",
     fontSize: 20,
     textAlign: "center",
+    color: "#E8F2F7",
   },
   subtitle: {
     color: "#84C2E1",
