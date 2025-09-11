@@ -87,6 +87,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 10,
     overflow: "hidden",
+    maxWidth: 900,
+    width: "100%",
+    alignSelf: "center",
   },
   container: {
     alignItems: "center",

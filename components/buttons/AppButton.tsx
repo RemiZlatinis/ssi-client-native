@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, ViewStyle } from "react-native";
+import { Platform, Pressable, StyleSheet, Text, ViewStyle } from "react-native";
 
 interface AppButtonProps {
   title: string;
@@ -16,18 +16,20 @@ function Button(props: AppButtonProps) {
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    height: 60,
-    borderRadius: 30,
     alignItems: "center",
-    justifyContent: "center",
+    alignSelf: "center",
     backgroundColor: "#37A9E1",
+    borderRadius: 30,
+    height: 60,
+    justifyContent: "center",
+    maxWidth: Platform.OS === "web" ? 300 : undefined,
+    width: "100%",
   },
   title: {
+    color: "#fff",
     fontFamily: "BrunoAce",
     fontSize: 24,
     textAlign: "center",
-    color: "#fff",
   },
 });
 

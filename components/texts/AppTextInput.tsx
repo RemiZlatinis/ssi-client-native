@@ -1,5 +1,6 @@
 import {
   TextInput as DefaultTextInput,
+  Platform,
   StyleSheet,
   TextInputProps,
   useColorScheme,
@@ -27,22 +28,24 @@ function TextInput(props: AppTextInputProps) {
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
+    alignSelf: "center",
     backgroundColor: "#E8F2F7",
     borderRadius: 30,
     height: 60,
     justifyContent: "center",
+    maxWidth: Platform.OS === "web" ? 300 : undefined,
     width: "100%",
   },
   containerDark: {
     backgroundColor: "#091620",
   },
   input: {
-    padding: "auto",
+    color: "#185E81",
     fontFamily: "Poppins-Medium",
     fontSize: 14,
-    textAlign: "center",
-    color: "#185E81",
     height: "100%",
+    padding: "auto",
+    textAlign: "center",
     width: "100%",
   },
 });
