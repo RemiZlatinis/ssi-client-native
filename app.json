@@ -30,7 +30,6 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#e8f2f7"
       },
-      "edgeToEdgeEnabled": true,
       "package": "com.remizlatinis.ssiclientmobile",
       "userInterfaceStyle": "automatic",
       "splash": {
@@ -47,10 +46,7 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": [
-      "expo-router",
-      "expo-font"
-    ],
+    "plugins": ["expo-router", "expo-font", "expo-web-browser"],
     "experiments": {
       "typedRoutes": true
     },
