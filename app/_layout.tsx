@@ -13,9 +13,8 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { useColorScheme } from "react-native";
 import "react-native-reanimated";
-
-import { useColorScheme } from "@/components/create-expo-app/useColorScheme";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -58,15 +57,15 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
+  const dark = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={dark ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="welcome" />
         <Stack.Screen
-          name="modal"
+          name="menu"
           options={{ presentation: "modal", animation: "fade_from_bottom" }}
         />
       </Stack>

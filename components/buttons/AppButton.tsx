@@ -1,13 +1,14 @@
-import { Pressable, StyleSheet, Text } from "react-native";
+import { Pressable, StyleSheet, Text, ViewStyle } from "react-native";
 
 interface AppButtonProps {
   title: string;
   onPress: () => void;
+  style?: ViewStyle;
 }
 
 function Button(props: AppButtonProps) {
   return (
-    <Pressable onPress={props.onPress} style={styles.container}>
+    <Pressable onPress={props.onPress} style={[styles.container, props.style]}>
       <Text style={styles.title}>{props.title}</Text>
     </Pressable>
   );
