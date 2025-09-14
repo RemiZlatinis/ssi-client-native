@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import { router } from "expo-router";
+import { useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -9,20 +9,18 @@ import {
   View,
 } from "react-native";
 
-import AppScreen from "@/components/containers/AppScreen";
+import useAuth from "@/auth/useAuth";
 import Button from "@/components/buttons/AppButton";
+import AppScreen from "@/components/containers/AppScreen";
 import TextInput from "@/components/texts/AppTextInput";
 
 const logo = require("@/assets/images/icon.png");
 
 export default function WelcomeScreen() {
   const dark = useColorScheme() === "dark";
-
-  const handleLogin = () => {
-    // After a successful login, you would replace the navigation stack
-    // to prevent the user from going back to the welcome screen.
-    router.replace("/");
-  };
+  const { login, loading } = useAuth();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   return (
     <AppScreen style={styles.screen}>
@@ -48,6 +46,8 @@ export default function WelcomeScreen() {
               placeholder: "Username",
               textContentType: "username",
               autoCapitalize: "none",
+              value: username,
+              onChangeText: setUsername,
             }}
           />
           <TextInput
@@ -55,10 +55,17 @@ export default function WelcomeScreen() {
               placeholder: "Password",
               secureTextEntry: true,
               textContentType: "password",
+              autoCapitalize: "none",
+              value: password,
+              onChangeText: setPassword,
             }}
           />
         </View>
-        <Button title="Login" onPress={handleLogin} />
+        <Button
+          title={loading ? "Logging in..." : "Login"}
+          onPress={() => login(username, password)}
+          disabled={loading}
+        />
       </KeyboardAvoidingView>
     </AppScreen>
   );

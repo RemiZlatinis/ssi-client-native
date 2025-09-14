@@ -1,5 +1,5 @@
 import { FontAwesome6 } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { Link } from "expo-router";
 import {
   Alert,
   FlatList,
@@ -10,11 +10,15 @@ import {
   View,
 } from "react-native";
 
+import useAuth from "@/auth/useAuth";
 import AppScreen from "@/components/containers/AppScreen";
 import ServerContainer from "@/components/servers/ServerContainer";
 import { Server } from "@/types";
+import { Image } from "expo-image";
 
 export default function OverviewScreen() {
+  const { auth } = useAuth();
+
   const servers: Server[] = [
     { id: "1", name: "Home Lab - Main Server", status: "OK" },
     { id: "2", name: "My NAS", status: "UPDATE" },
@@ -29,9 +33,13 @@ export default function OverviewScreen() {
         <View style={styles.headerItemContainer} />
         <Text style={styles.header}>Service Status Indicator</Text>
         <View style={styles.headerItemContainer}>
-          <Pressable onPress={() => router.push("/menu")}>
-            <FontAwesome6 name="user-circle" size={32} color="#fff" />
-          </Pressable>
+          <Link href="/menu">
+            {auth?.user?.picture ? (
+              <Image style={styles.userPicture} source={auth.user.picture} />
+            ) : (
+              <FontAwesome6 name="user-circle" size={32} color="#fff" />
+            )}
+          </Link>
         </View>
       </View>
 
@@ -88,6 +96,13 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontFamily: "BrunoAce",
     paddingVertical: 16,
+  },
+  userPicture: {
+    borderColor: "#84C2E1",
+    borderRadius: 20,
+    borderWidth: 1,
+    height: 40,
+    width: 40,
   },
   actionButton: {
     position: "absolute",

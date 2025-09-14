@@ -13,6 +13,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 import AppScreen from "@/components/containers/AppScreen";
 import Button from "@/components/buttons/AppButton";
+import useAuth from "@/auth/useAuth";
 
 const menuItems = [
   { id: "1", title: "Profile", icon: "person-outline", route: "/profile" },
@@ -32,6 +33,8 @@ const menuItems = [
 ];
 
 export default function ModalScreen() {
+  const { auth, logout } = useAuth();
+
   return (
     <AppScreen style={styles.container}>
       <Text style={styles.title}>Menu</Text>
@@ -43,11 +46,10 @@ export default function ModalScreen() {
       />
 
       <View style={styles.userContainer}>
-        <Image
-          style={styles.userPicture}
-          source="https://avatars.githubusercontent.com/u/39838694?v=4"
-        />
-        <Text style={styles.username}>Remi Zlatinis</Text>
+        <Image style={styles.userPicture} source={auth?.user?.picture} />
+        <Text style={styles.username}>
+          {auth?.user?.first_name} {auth?.user?.last_name}
+        </Text>
       </View>
       <View style={styles.separator} />
 
@@ -58,7 +60,7 @@ export default function ModalScreen() {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.menuItem}
-            onPress={() => router.push(item.route as `/${string}`)}
+            // onPress={() => router.push(item.route as `/${string}`)}
           >
             <Ionicons
               name={item.icon as any}
@@ -72,11 +74,7 @@ export default function ModalScreen() {
 
       <View style={styles.separator} />
 
-      <Button
-        title="Logout"
-        onPress={() => router.replace("/welcome")}
-        style={styles.logoutButton}
-      />
+      <Button title="Logout" onPress={logout} style={styles.logoutButton} />
     </AppScreen>
   );
 }

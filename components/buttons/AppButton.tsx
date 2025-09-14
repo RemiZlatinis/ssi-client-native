@@ -1,6 +1,13 @@
-import { Platform, Pressable, StyleSheet, Text, ViewStyle } from "react-native";
+import {
+  ButtonProps,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  ViewStyle,
+} from "react-native";
 
-interface AppButtonProps {
+interface AppButtonProps extends ButtonProps {
   title: string;
   onPress: () => void;
   style?: ViewStyle;

@@ -16,27 +16,40 @@ import { useEffect } from "react";
 import { useColorScheme } from "react-native";
 import "react-native-reanimated";
 
+import { AuthProvider } from "@/auth/AuthContext";
+import useAuth from "@/auth/useAuth";
+
 export {
   // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
+  ErrorBoundary
 } from "expo-router";
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: "welcome",
+  initialRouteName: "index",
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
+  return (
+    <AuthProvider>
+      <RootLayoutNav />
+    </AuthProvider>
+  );
+}
+
+function RootLayoutNav() {
+  const [fontsLoaded, error] = useFonts({
     BrunoAce: require("../assets/fonts/BrunoAce-Regular.ttf"),
     "Poppins-Light": Poppins_300Light,
     Poppins: Poppins_400Regular,
     "Poppins-Medium": Poppins_500Medium,
     ...FontAwesome.font,
   });
+  const dark = useColorScheme();
+  const { auth, restoreAuthObject, loading: loadingAuth } = useAuth();
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
@@ -44,30 +57,34 @@ export default function RootLayout() {
   }, [error]);
 
   useEffect(() => {
-    if (loaded) {
+    restoreAuthObject();
+  }, []);
+
+  useEffect(() => {
+    if (fontsLoaded && !loadingAuth) {
+      console.log("Fonts loaded and auth restored, hiding splash screen");
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [fontsLoaded, loadingAuth]);
 
-  if (!loaded) {
+  if (!fontsLoaded || loadingAuth) {
     return null;
   }
 
-  return <RootLayoutNav />;
-}
-
-function RootLayoutNav() {
-  const dark = useColorScheme();
-
+  const isAuthenticated = auth != null;
   return (
     <ThemeProvider value={dark ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="welcome" />
-        <Stack.Screen
-          name="menu"
-          options={{ presentation: "modal", animation: "fade_from_bottom" }}
-        />
+        <Stack.Protected guard={isAuthenticated}>
+          <Stack.Screen name="index" />
+          <Stack.Screen
+            name="menu"
+            options={{ presentation: "modal", animation: "fade_from_bottom" }}
+          />
+        </Stack.Protected>
+        <Stack.Protected guard={!isAuthenticated}>
+          <Stack.Screen name="welcome" />
+        </Stack.Protected>
       </Stack>
     </ThemeProvider>
   );
