@@ -15,10 +15,12 @@ import useAuth from "@/auth/useAuth";
 import AgentContainer from "@/components/agents/AgentContainer";
 import AppScreen from "@/components/containers/AppScreen";
 import useAgents from "@/services/useAgents";
+import useAgentsSSE from "@/services/useAgentsSSE";
 
 export default function OverviewScreen() {
   const { auth } = useAuth();
   const { agents, refresh, refreshing } = useAgents();
+  useAgentsSSE();
 
   return (
     <AppScreen>

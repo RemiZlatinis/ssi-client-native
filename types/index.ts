@@ -28,5 +28,6 @@ export interface AgentService {
 export interface Agent {
   id: string;
   name: string;
+  is_online: boolean;
   services: AgentService[];
 }
