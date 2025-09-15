@@ -97,8 +97,8 @@ const styles = StyleSheet.create({
     borderColor: "#84C2E1",
     borderRadius: 20,
     borderWidth: 1,
-    height: 40,
-    width: 40,
+    height: 32,
+    width: 32,
   },
   actionButton: {
     position: "absolute",
