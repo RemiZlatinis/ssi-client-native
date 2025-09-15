@@ -8,7 +8,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { Agent } from "@/types";
+import { Agent, Status } from "@/types";
 import AgentService from "./AgentService";
 import StatusIcon from "./StatusIcon";
 
@@ -34,6 +34,14 @@ function AgentContainer({ agent }: AgentContainerProps) {
     setIsExpanded(!isExpanded);
   };
 
+  const agentStatus = agent.services.reduce<Status>((prev, service) => {
+    if (service.last_status === null) return prev;
+    const statusOrder = ["ERROR", "FAILURE", "WARNING", "UPDATE", "OK"];
+    return statusOrder.indexOf(service.last_status) < statusOrder.indexOf(prev!)
+      ? service.last_status
+      : prev;
+  }, "OK");
+
   return (
     <View style={styles.wrapper}>
       <Pressable onPress={toggleExpand} style={styles.container}>
@@ -42,7 +50,7 @@ function AgentContainer({ agent }: AgentContainerProps) {
           style={styles.agentIcon}
           contentFit="contain"
         >
-          <StatusIcon status="ERROR" styles={styles.agentStatusIcon} />
+          <StatusIcon status={agentStatus} styles={styles.agentStatusIcon} />
         </ImageBackground>
         <Text style={styles.agentName}>{agent.name}</Text>
         <Entypo
