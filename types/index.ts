@@ -15,8 +15,18 @@ export interface AuthObject {
   user: User;
 }
 
-export interface Server {
+export interface AgentService {
+  name: string;
+  description?: string;
+  version?: string;
+  schedule?: string;
+  last_status: Status;
+  last_message?: string;
+  last_seen?: Date;
+}
+
+export interface Agent {
   id: string;
   name: string;
-  status: Status;
+  services: AgentService[];
 }

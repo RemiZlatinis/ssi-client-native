@@ -1,4 +1,5 @@
 import { FontAwesome6 } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { Link } from "expo-router";
 import {
   Alert,
@@ -11,20 +12,13 @@ import {
 } from "react-native";
 
 import useAuth from "@/auth/useAuth";
+import AgentContainer from "@/components/agents/AgentContainer";
 import AppScreen from "@/components/containers/AppScreen";
-import ServerContainer from "@/components/servers/ServerContainer";
-import { Server } from "@/types";
-import { Image } from "expo-image";
+import useAgents from "@/services/useAgents";
 
 export default function OverviewScreen() {
   const { auth } = useAuth();
-
-  const servers: Server[] = [
-    { id: "1", name: "Home Lab - Main Server", status: "OK" },
-    { id: "2", name: "My NAS", status: "UPDATE" },
-    { id: "3", name: "Node 1", status: "ERROR" },
-    { id: "4", name: "Node 2", status: "ERROR" },
-  ];
+  const { agents, refresh, refreshing } = useAgents();
 
   return (
     <AppScreen>
@@ -45,11 +39,13 @@ export default function OverviewScreen() {
 
       {/* Content */}
       <FlatList
-        data={servers}
+        onRefresh={refresh}
+        refreshing={refreshing}
+        data={agents}
         style={styles.list}
         contentContainerStyle={styles.listContentContainer}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <ServerContainer server={item} />}
+        renderItem={({ item }) => <AgentContainer agent={item} />}
       />
 
       {/* Action Button */}

@@ -8,17 +8,17 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { Server } from "@/types";
-import ServerService from "./ServerService";
+import { Agent } from "@/types";
+import AgentService from "./AgentService";
 import StatusIcon from "./StatusIcon";
 
-const ServerIcon = require("@/assets/icons/server.png");
+const AgentIcon = require("@/assets/icons/server.png");
 
-interface ServerContainerProps {
-  server: Server;
+interface AgentContainerProps {
+  agent: Agent;
 }
 
-function ServerContainer({ server }: ServerContainerProps) {
+function AgentContainer({ agent }: AgentContainerProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [bodyHeight, setBodyHeight] = useState(0);
   const height = useSharedValue(0);
@@ -38,13 +38,13 @@ function ServerContainer({ server }: ServerContainerProps) {
     <View style={styles.wrapper}>
       <Pressable onPress={toggleExpand} style={styles.container}>
         <ImageBackground
-          source={ServerIcon}
-          style={styles.serverIcon}
+          source={AgentIcon}
+          style={styles.agentIcon}
           contentFit="contain"
         >
-          <StatusIcon status={server.status} styles={styles.serverStatusIcon} />
+          <StatusIcon status="ERROR" styles={styles.agentStatusIcon} />
         </ImageBackground>
-        <Text style={styles.serverName}>{server.name}</Text>
+        <Text style={styles.agentName}>{agent.name}</Text>
         <Entypo
           name={isExpanded ? "chevron-up" : "chevron-down"}
           size={20}
@@ -59,21 +59,14 @@ function ServerContainer({ server }: ServerContainerProps) {
           }}
         >
           <View style={styles.body}>
-            <ServerService
-              name="Uptime"
-              status="OK"
-              lastUpdate={new Date(Date.now() - 1000 * 30)}
-            />
-            <ServerService
-              name="CPU Usage"
-              status="UPDATE"
-              lastUpdate={new Date(Date.now() - 1000 * 60 * 5)}
-            />
-            <ServerService
-              name="Memory"
-              status="ERROR"
-              lastUpdate={new Date(Date.now() - 1000 * 60 * 60 * 2)}
-            />
+            {agent.services.map((service, index) => (
+              <AgentService key={index} service={service} />
+            ))}
+
+            {/* No services feedback */}
+            {agent.services.length === 0 && (
+              <Text style={{ color: "#fff" }}>No services found.</Text>
+            )}
           </View>
         </View>
       </Animated.View>
@@ -107,15 +100,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingBottom: 10,
   },
-  serverIcon: {
+  agentIcon: {
     width: 40,
     height: 40,
   },
-  serverStatusIcon: {
+  agentStatusIcon: {
     position: "absolute",
     bottom: 0,
   },
-  serverName: {
+  agentName: {
     flex: 1,
     fontSize: 16,
     marginHorizontal: 10,
@@ -125,4 +118,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ServerContainer;
+export default AgentContainer;

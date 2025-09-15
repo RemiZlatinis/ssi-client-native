@@ -1,27 +1,27 @@
-import { View, Text, StyleSheet } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
-import StatusIcon from "./StatusIcon";
 import Colors from "@/constants/Colors";
-import { Status } from "@/types";
+import { AgentService as AgentServiceType } from "@/types";
+import StatusIcon from "./StatusIcon";
 
-interface ServerServiceProps {
-  name: string;
-  status: Status;
-  lastUpdate: Date;
+interface AgentServiceProps {
+  service: AgentServiceType;
 }
 
-function ServerService({ name, status, lastUpdate }: ServerServiceProps) {
+function AgentService({ service }: AgentServiceProps) {
   return (
     <View style={styles.container}>
-      <StatusIcon status={status} size={20} />
+      <StatusIcon status={service.last_status} size={20} />
       <View style={styles.detailContainer}>
         <View style={styles.detailInnerContainer}>
-          <Text style={styles.serviceName}>{name}</Text>
+          <Text style={styles.serviceName}>{service.name}</Text>
           <Text style={styles.serviceLastUpdate}>
-            {HumanizeDate(lastUpdate)}
+            {HumanizeDate(service.last_seen)}
           </Text>
         </View>
-        <Text style={styles.serviceMessage}>No errors found.</Text>
+        {service.last_message && (
+          <Text style={styles.serviceMessage}>{service.last_message}</Text>
+        )}
       </View>
     </View>
   );
@@ -51,16 +51,18 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontFamily: "Poppins-Light",
     fontSize: 12,
-    color: Colors.server.lastUpdate,
+    color: Colors.agent.lastUpdate,
   },
   serviceMessage: {
     fontFamily: "Poppins-Light",
     fontSize: 12,
-    color: Colors.server.message,
+    color: Colors.agent.message,
   },
 });
 
-function HumanizeDate(date: Date): string {
+function HumanizeDate(date?: Date): string {
+  if (!date) return "Never";
+
   const now = new Date();
   const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
@@ -69,6 +71,7 @@ function HumanizeDate(date: Date): string {
   }
 
   const minutes = Math.floor(seconds / 60);
+
   if (minutes < 60) {
     return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
   }
@@ -87,4 +90,4 @@ function HumanizeDate(date: Date): string {
   return `${months} month${months > 1 ? "s" : ""} ago`;
 }
 
-export default ServerService;
+export default AgentService;
