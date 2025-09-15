@@ -1,6 +1,6 @@
 import { Entypo } from "@expo/vector-icons";
 import { ImageBackground } from "expo-image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -23,6 +23,19 @@ function AgentContainer({ agent }: AgentContainerProps) {
   const [bodyHeight, setBodyHeight] = useState(0);
   const height = useSharedValue(0);
 
+  useEffect(() => {
+    console.log(
+      "useEffect triggered. isExpanded:",
+      isExpanded,
+      "bodyHeight:",
+      bodyHeight
+    );
+    if (isExpanded) {
+      height.value = withTiming(bodyHeight, { duration: 300 });
+      console.log("Animating height.value to:", bodyHeight);
+    }
+  }, [bodyHeight, isExpanded]);
+
   const animatedStyle = useAnimatedStyle(() => {
     return {
       height: height.value,
@@ -41,6 +54,8 @@ function AgentContainer({ agent }: AgentContainerProps) {
       ? service.last_status
       : prev;
   }, "OK");
+
+  console.log(agent.services.toString());
 
   return (
     <View style={styles.wrapper}>
@@ -63,12 +78,13 @@ function AgentContainer({ agent }: AgentContainerProps) {
         <View
           style={{ position: "absolute", width: "100%" }}
           onLayout={(event) => {
-            setBodyHeight(event.nativeEvent.layout.height);
+            const newHeight = event.nativeEvent.layout.height;
+            setBodyHeight(newHeight);
           }}
         >
           <View style={styles.body}>
-            {agent.services.map((service, index) => (
-              <AgentService key={index} service={service} />
+            {agent.services.map((service) => (
+              <AgentService key={service.service_id} service={service} />
             ))}
 
             {/* No services feedback */}

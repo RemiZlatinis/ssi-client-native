@@ -14,13 +14,11 @@ import {
 import useAuth from "@/auth/useAuth";
 import AgentContainer from "@/components/agents/AgentContainer";
 import AppScreen from "@/components/containers/AppScreen";
-import useAgents from "@/services/useAgents";
 import useAgentsSSE from "@/services/useAgentsSSE";
 
 export default function OverviewScreen() {
   const { auth } = useAuth();
-  const { agents, refresh, refreshing } = useAgents();
-  useAgentsSSE();
+  const { agents, loading } = useAgentsSSE();
 
   return (
     <AppScreen>
@@ -41,8 +39,6 @@ export default function OverviewScreen() {
 
       {/* Content */}
       <FlatList
-        onRefresh={refresh}
-        refreshing={refreshing}
         data={agents}
         style={styles.list}
         contentContainerStyle={styles.listContentContainer}
