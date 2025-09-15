@@ -62,7 +62,6 @@ function RootLayoutNav() {
 
   useEffect(() => {
     if (fontsLoaded && !loadingAuth) {
-      console.log("Fonts loaded and auth restored, hiding splash screen");
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded, loadingAuth]);
