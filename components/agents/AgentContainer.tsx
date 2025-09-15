@@ -24,15 +24,8 @@ function AgentContainer({ agent }: AgentContainerProps) {
   const height = useSharedValue(0);
 
   useEffect(() => {
-    console.log(
-      "useEffect triggered. isExpanded:",
-      isExpanded,
-      "bodyHeight:",
-      bodyHeight
-    );
     if (isExpanded) {
       height.value = withTiming(bodyHeight, { duration: 300 });
-      console.log("Animating height.value to:", bodyHeight);
     }
   }, [bodyHeight, isExpanded]);
 
@@ -54,8 +47,6 @@ function AgentContainer({ agent }: AgentContainerProps) {
       ? service.last_status
       : prev;
   }, "OK");
-
-  console.log(agent.services.toString());
 
   return (
     <View style={styles.wrapper}>
