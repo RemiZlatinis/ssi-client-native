@@ -58,7 +58,7 @@ function RootLayoutNav() {
 
   useEffect(() => {
     restoreAuthObject();
-  }, [restoreAuthObject]);
+  }, []);
 
   useEffect(() => {
     if (fontsLoaded && !loadingAuth) {
