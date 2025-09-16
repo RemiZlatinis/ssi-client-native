@@ -16,19 +16,7 @@ export interface AuthObject {
 }
 
 export interface AgentService {
-  id: string;
   service_id: string; // Provided by the service-script itself
-  name: string;
-  description?: string;
-  version?: string;
-  schedule?: string;
-  last_status: Status;
-  last_message?: string;
-  last_seen?: Date;
-}
-
-export interface AgentServiceSSE {
-  service_id: string;
   name: string;
   description?: string;
   version?: string;
@@ -51,7 +39,7 @@ export interface AgentSSE {
   is_online: boolean;
   ip_address: string;
   registration_status: "pending" | "registered" | "unregistered";
-  services: AgentServiceSSE[];
+  services: AgentService[];
 }
 
 export interface InitialStatusEvent {

@@ -149,7 +149,6 @@ export function mapAgents(agents: any[]): Agent[] {
 
 export function mapService(service: any): AgentService {
   return {
-    id: service.service_id,
     service_id: service.service_id,
     name: service.name,
     description: service.description,
