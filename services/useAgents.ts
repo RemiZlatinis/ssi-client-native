@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Agent } from "@/types";
 import config from "@/config";
@@ -9,11 +9,7 @@ function useAgents() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    fetchAgents();
-  }, []);
-
-  function fetchAgents() {
+  const fetchAgents = useCallback(() => {
     async function fetchData() {
       setLoading(true);
       try {
@@ -25,7 +21,7 @@ function useAgents() {
               Authorization: `Bearer ${auth?.access}`,
               "Content-Type": "application/json",
             },
-          }
+          },
         );
         const data = await response.json();
         setAgents(mapAgents(data));
@@ -36,7 +32,11 @@ function useAgents() {
       }
     }
     fetchData();
-  }
+  }, [auth]);
+
+  useEffect(() => {
+    fetchAgents();
+  }, [fetchAgents]);
 
   function refresh() {
     fetchAgents();

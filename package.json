@@ -52,6 +52,8 @@
   "devDependencies": {
     "@babel/core": "^7.28.4",
     "@types/react": "~19.1.12",
+    "@typescript-eslint/eslint-plugin": "^8.44.0",
+    "@typescript-eslint/parser": "^8.44.0",
     "eslint-config-expo": "^10.0.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
@@ -61,6 +63,7 @@
     "lint-staged": "^16.1.6",
     "prettier": "^3.6.2",
     "react-test-renderer": "19.0.0",
+    "ts-unused-exports": "^11.0.1",
     "typescript": "~5.9.2"
   },
   "private": true,

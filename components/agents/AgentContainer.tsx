@@ -27,7 +27,7 @@ function AgentContainer({ agent }: AgentContainerProps) {
     if (isExpanded) {
       height.value = withTiming(bodyHeight, { duration: 300 });
     }
-  }, [bodyHeight, isExpanded]);
+  }, [height, bodyHeight, isExpanded]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {

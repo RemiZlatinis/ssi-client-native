@@ -25,7 +25,7 @@ function useAuth() {
           },
           body: JSON.stringify({ username, password }),
           // signal: AbortSignal.timeout(5000), // 5 seconds timeout
-        }
+        },
       );
 
       const data = await response.json();

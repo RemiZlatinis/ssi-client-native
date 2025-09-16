@@ -16,7 +16,7 @@ function useAgentsSSE() {
     setLoading(true);
     const es = new EventSource(
       config.BACKEND.BASE_URL + config.BACKEND.AGENTS_SSE,
-      { headers: { Authorization: `Bearer ${auth.access}` } }
+      { headers: { Authorization: `Bearer ${auth.access}` } },
     );
 
     // es.addEventListener("open", (event) => {
@@ -42,8 +42,8 @@ function useAgentsSSE() {
               prevAgents.map((agent) =>
                 agent.id === data.agent_id
                   ? { ...agent, is_online: data.is_online }
-                  : agent
-              )
+                  : agent,
+              ),
             );
             break;
           case "service_status_update":
@@ -60,11 +60,11 @@ function useAgentsSSE() {
                               last_message: data.message,
                               last_seen: data.timestamp,
                             })
-                          : service
+                          : service,
                       ),
                     }
-                  : agent
-              )
+                  : agent,
+              ),
             );
             break;
           case "service_removed":
@@ -74,11 +74,11 @@ function useAgentsSSE() {
                   ? {
                       ...agent,
                       services: agent.services.filter(
-                        (service) => service.service_id !== data.service_id
+                        (service) => service.service_id !== data.service_id,
                       ),
                     }
-                  : agent
-              )
+                  : agent,
+              ),
             );
             break;
           case "service_added":
@@ -101,8 +101,8 @@ function useAgentsSSE() {
                         }),
                       ],
                     }
-                  : agent
-              )
+                  : agent,
+              ),
             );
             break;
           default:
@@ -127,7 +127,7 @@ function useAgentsSSE() {
     return () => {
       es.close();
     };
-  }, [auth?.access]);
+  }, [auth]);
 
   return { agents, loading };
 }

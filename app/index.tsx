@@ -18,7 +18,7 @@ import useAgentsSSE from "@/services/useAgentsSSE";
 
 export default function OverviewScreen() {
   const { auth } = useAuth();
-  const { agents, loading } = useAgentsSSE();
+  const { agents } = useAgentsSSE();
 
   return (
     <AppScreen>
@@ -52,7 +52,7 @@ export default function OverviewScreen() {
         onPress={() =>
           Alert.alert(
             "Register new Agent",
-            "You cannot not register new Agent. (Yet)"
+            "You cannot not register new Agent. (Yet)",
           )
         }
       >
