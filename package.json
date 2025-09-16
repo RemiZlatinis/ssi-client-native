@@ -52,6 +52,7 @@
   "devDependencies": {
     "@babel/core": "^7.28.4",
     "@types/react": "~19.1.12",
+    "eslint-config-expo": "^10.0.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "husky": "^9.1.7",
