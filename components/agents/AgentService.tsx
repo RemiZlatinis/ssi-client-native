@@ -11,7 +11,9 @@ interface AgentServiceProps {
 function AgentService({ service }: AgentServiceProps) {
   return (
     <View style={styles.container}>
-      <StatusIcon status={service.last_status} size={20} />
+      <View style={styles.iconContainer}>
+        <StatusIcon status={service.last_status} />
+      </View>
       <View style={styles.detailContainer}>
         <View style={styles.detailInnerContainer}>
           <Text style={styles.serviceName}>{service.name}</Text>
@@ -32,6 +34,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
     flexDirection: "row",
     alignItems: "center",
+  },
+  iconContainer: {
+    alignItems: "center",
+    height: 40,
+    justifyContent: "center",
+    // width: 40,
   },
   detailContainer: {
     flex: 1,

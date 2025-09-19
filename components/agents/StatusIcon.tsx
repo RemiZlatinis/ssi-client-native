@@ -11,7 +11,7 @@ const StatusIconMap: Record<Exclude<Status, null>, ImageData> = {
 
 function StatusIcon({
   status,
-  size = 24,
+  size = 20,
   styles,
 }: {
   size?: number;
