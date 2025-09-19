@@ -48,6 +48,7 @@ function AgentContainer({ agent }: AgentContainerProps) {
       "WARNING",
       "UPDATE",
       "OK",
+      "UNKNOWN",
     ];
     return agent.services.reduce<ServiceStatus>((prev, service) => {
       if (service.last_status === null) return prev;
@@ -56,7 +57,7 @@ function AgentContainer({ agent }: AgentContainerProps) {
         statusOrder.indexOf(prev)
         ? service.last_status
         : prev;
-    }, "OK");
+    }, "UNKNOWN");
   }, [agent.services]);
 
   return (

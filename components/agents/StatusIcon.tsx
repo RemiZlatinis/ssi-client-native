@@ -2,6 +2,7 @@ import { Image, ImageStyle } from "expo-image";
 import { ServiceStatus } from "@/types";
 
 const StatusIconMap: Record<Exclude<ServiceStatus, null>, ImageData> = {
+  UNKNOWN: require("@/assets/icons/unknown.png"),
   OK: require("@/assets/icons/ok.png"),
   UPDATE: require("@/assets/icons/update.png"),
   WARNING: require("@/assets/icons/warning.png"),
@@ -18,8 +19,6 @@ function StatusIcon({
   status: ServiceStatus;
   styles?: ImageStyle;
 }) {
-  if (status === null) return null;
-
   return (
     <Image
       source={StatusIconMap[status]}
