@@ -15,9 +15,7 @@ import {
 function useAgentsSSE() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<
-    "connected" | "disconnected"
-  >("disconnected");
+  const [isConnected, setIsConnected] = useState(false);
 
   const { auth } = useAuth();
 
@@ -31,7 +29,7 @@ function useAgentsSSE() {
     );
 
     es.addEventListener("open", (event) => {
-      setConnectionStatus("connected");
+      setIsConnected(true);
     });
 
     es.addEventListener("message", (event) => {
@@ -144,13 +142,13 @@ function useAgentsSSE() {
         console.log("SSE Error:", error);
       else console.error("SSE Error:", error);
       setLoading(false);
-      setConnectionStatus("disconnected");
+      setIsConnected(false);
     });
 
     es.addEventListener("close", (event) => {
       // console.log("Close SSE connection.");
       setLoading(false);
-      setConnectionStatus("disconnected");
+      setIsConnected(false);
     });
 
     return () => {
@@ -158,7 +156,7 @@ function useAgentsSSE() {
     };
   }, [auth]);
 
-  return { agents, loading, connectionStatus };
+  return { agents, loading, isConnected };
 }
 
 function mapAgents(agents: AgentSSE[]): Agent[] {

@@ -5,18 +5,21 @@ import { FlatList, StatusBar, StyleSheet, Text, View } from "react-native";
 
 import useAuth from "@/auth/useAuth";
 import AgentContainer from "@/components/agents/AgentContainer";
+import ConnectivityStatus from "@/components/animations/ConnectivityStatus";
 import AppScreen from "@/components/containers/AppScreen";
 import useAgentsSSE from "@/services/useAgentsSSE";
 
 export default function OverviewScreen() {
   const { auth } = useAuth();
-  const { agents } = useAgentsSSE();
+  const { agents, isConnected } = useAgentsSSE();
 
   return (
     <AppScreen>
       {/* Header */}
       <View style={styles.headerContainer}>
-        <View style={styles.headerItemContainer} />
+        <View style={styles.headerItemContainer}>
+          <ConnectivityStatus isConnected={isConnected} />
+        </View>
         <Text style={styles.header}>Service Status Indicator</Text>
         <View style={styles.headerItemContainer}>
           <Link href="/menu">
