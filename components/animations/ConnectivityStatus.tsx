@@ -16,8 +16,8 @@ function ConnectivityStatus({ isConnected }: ConnectivityStatusProps) {
       autoPlay
       ref={animation}
       style={{
-        width: 200,
-        height: 200,
+        width: 50,
+        height: 50,
       }}
       source={isConnected ? greenPulse : redPulse}
     />
