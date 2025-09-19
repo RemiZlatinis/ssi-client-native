@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View } from "react-native";
 
 import Colors from "@/constants/Colors";
-import { AgentService as AgentServiceType } from "@/types";
+import { Service } from "@/types";
 import StatusIcon from "./StatusIcon";
 
 interface AgentServiceProps {
-  service: AgentServiceType;
+  service: Service;
 }
 
 function AgentService({ service }: AgentServiceProps) {
@@ -18,7 +18,7 @@ function AgentService({ service }: AgentServiceProps) {
         <View style={styles.detailInnerContainer}>
           <Text style={styles.serviceName}>{service.name}</Text>
           <Text style={styles.serviceLastUpdate}>
-            {HumanizeDate(service.last_seen)}
+            {HumanizeDate(service.last_seen || undefined)}
           </Text>
         </View>
         {service.last_message && (
