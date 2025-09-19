@@ -1,4 +1,6 @@
 import {
+  Poppins_100Thin,
+  Poppins_200ExtraLight,
   Poppins_300Light,
   Poppins_400Regular,
   Poppins_500Medium,
@@ -43,6 +45,7 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const [fontsLoaded, error] = useFonts({
     BrunoAce: require("../assets/fonts/BrunoAce-Regular.ttf"),
+    "Poppins-ExtraLight": Poppins_200ExtraLight,
     "Poppins-Light": Poppins_300Light,
     Poppins: Poppins_400Regular,
     "Poppins-Medium": Poppins_500Medium,
@@ -78,6 +81,14 @@ function RootLayoutNav() {
           <Stack.Screen name="index" />
           <Stack.Screen
             name="menu"
+            options={{ presentation: "modal", animation: "fade_from_bottom" }}
+          />
+          <Stack.Screen
+            name="add"
+            options={{ presentation: "modal", animation: "fade_from_bottom" }}
+          />
+          <Stack.Screen
+            name="edit"
             options={{ presentation: "modal", animation: "fade_from_bottom" }}
           />
         </Stack.Protected>

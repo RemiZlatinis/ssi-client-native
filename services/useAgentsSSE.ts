@@ -3,11 +3,22 @@ import EventSource from "react-native-sse";
 
 import useAuth from "@/auth/useAuth";
 import config from "@/config";
-import { Agent, AgentService, SSEMessage } from "@/types";
+import {
+  Agent,
+  AgentSSE,
+  KNOWN_AGENT_SSE_TYPES,
+  MessageSSE,
+  Service,
+  ServiceSSE,
+} from "@/types";
 
 function useAgentsSSE() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState<
+    "connected" | "disconnected"
+  >("disconnected");
+
   const { auth } = useAuth();
 
   useEffect(() => {
@@ -19,18 +30,32 @@ function useAgentsSSE() {
       { headers: { Authorization: `Bearer ${auth.access}` } },
     );
 
-    // es.addEventListener("open", (event) => {
-    //   console.log("Open SSE connection.");
-    // });
+    es.addEventListener("open", (event) => {
+      setConnectionStatus("connected");
+    });
 
     es.addEventListener("message", (event) => {
       try {
-        if (!event.data) {
-          console.warn("SSE message event data is null or empty.");
+        if (!event.data)
+          return console.warn("SSE message event data is null or empty.");
+
+        // The 'data' from an SSE message is a string. We parse it into a plain object first for validation.
+        const payload: unknown = JSON.parse(event.data);
+
+        // Type guard to check if the payload is a valid message structure with a known type.
+        if (
+          !payload ||
+          typeof payload !== "object" ||
+          !("type" in payload) ||
+          typeof payload.type !== "string" ||
+          !(KNOWN_AGENT_SSE_TYPES as readonly string[]).includes(payload.type)
+        ) {
+          console.warn("Unknown SSE event:", event.data);
           return;
         }
-        const data: SSEMessage = JSON.parse(event.data);
-        // console.log("Received SSE message:", data);
+
+        // Cast as valid event
+        const data = payload as MessageSSE;
 
         switch (data.type) {
           case "initial_status":
@@ -53,13 +78,13 @@ function useAgentsSSE() {
                   ? {
                       ...agent,
                       services: agent.services.map((service) =>
-                        service.service_id === data.service_id
-                          ? mapService({
+                        service.id === data.service_id
+                          ? {
                               ...service,
                               last_status: data.status,
                               last_message: data.message,
-                              last_seen: data.timestamp,
-                            })
+                              last_seen: dateStringToDate(data.timestamp),
+                            }
                           : service,
                       ),
                     }
@@ -74,7 +99,7 @@ function useAgentsSSE() {
                   ? {
                       ...agent,
                       services: agent.services.filter(
-                        (service) => service.service_id !== data.service_id,
+                        (service) => service.id !== data.service_id,
                       ),
                     }
                   : agent,
@@ -115,13 +140,17 @@ function useAgentsSSE() {
     });
 
     es.addEventListener("error", (error) => {
-      console.error("SSE Error:", error);
+      if ("message" in error && error.message === "Connection reset")
+        console.log("SSE Error:", error);
+      else console.error("SSE Error:", error);
       setLoading(false);
+      setConnectionStatus("disconnected");
     });
 
     es.addEventListener("close", (event) => {
       // console.log("Close SSE connection.");
       setLoading(false);
+      setConnectionStatus("disconnected");
     });
 
     return () => {
@@ -129,27 +158,22 @@ function useAgentsSSE() {
     };
   }, [auth]);
 
-  return { agents, loading };
+  return { agents, loading, connectionStatus };
 }
 
-function dateStringToDate(dateString: string | undefined): Date | undefined {
-  if (!dateString) return undefined;
-  const date = new Date(dateString);
-  return isNaN(date.getTime()) ? undefined : date;
-}
-
-export function mapAgents(agents: any[]): Agent[] {
+function mapAgents(agents: AgentSSE[]): Agent[] {
   return agents.map((agent) => ({
     id: agent.agent_id,
     name: agent.agent_name,
     is_online: agent.is_online,
-    services: agent.services.map((service: any) => mapService(service)),
+    ip_address: agent.ip_address,
+    services: agent.services.map((service) => mapService(service)),
   }));
 }
 
-export function mapService(service: any): AgentService {
+function mapService(service: ServiceSSE): Service {
   return {
-    service_id: service.service_id,
+    id: service.service_id, // This is a "agent_service_id" not the real service ID in DB
     name: service.name,
     description: service.description,
     version: service.version,
@@ -158,6 +182,12 @@ export function mapService(service: any): AgentService {
     last_message: service.last_message,
     last_seen: dateStringToDate(service.last_seen),
   };
+}
+
+function dateStringToDate(dateString: string | null): Date | null {
+  if (dateString === null) return null;
+  const date = new Date(dateString);
+  return isNaN(date.getTime()) ? null : date;
 }
 
 export default useAgentsSSE;

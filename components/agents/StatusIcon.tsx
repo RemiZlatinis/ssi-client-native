@@ -1,7 +1,7 @@
 import { Image, ImageStyle } from "expo-image";
-import { Status } from "@/types";
+import { ServiceStatus } from "@/types";
 
-const StatusIconMap: Record<Exclude<Status, null>, ImageData> = {
+const StatusIconMap: Record<Exclude<ServiceStatus, null>, ImageData> = {
   OK: require("@/assets/icons/ok.png"),
   UPDATE: require("@/assets/icons/update.png"),
   WARNING: require("@/assets/icons/warning.png"),
@@ -15,7 +15,7 @@ function StatusIcon({
   styles,
 }: {
   size?: number;
-  status: Status;
+  status: ServiceStatus;
   styles?: ImageStyle;
 }) {
   if (status === null) return null;

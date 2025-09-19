@@ -1,15 +1,7 @@
 import { FontAwesome6 } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
-import {
-  Alert,
-  FlatList,
-  Pressable,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, StatusBar, StyleSheet, Text, View } from "react-native";
 
 import useAuth from "@/auth/useAuth";
 import AgentContainer from "@/components/agents/AgentContainer";
@@ -47,17 +39,11 @@ export default function OverviewScreen() {
       />
 
       {/* Action Button */}
-      <Pressable
-        style={styles.actionButton}
-        onPress={() =>
-          Alert.alert(
-            "Register new Agent",
-            "You cannot not register new Agent. (Yet)",
-          )
-        }
-      >
-        <FontAwesome6 name="plus" size={24} color="#84C2E1" />
-      </Pressable>
+      <Link href="/add" style={styles.actionButton}>
+        <View style={styles.actionButton}>
+          <FontAwesome6 name="plus" size={24} color="#84C2E1" />
+        </View>
+      </Link>
     </AppScreen>
   );
 }

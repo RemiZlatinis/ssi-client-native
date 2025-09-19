@@ -1,6 +1,7 @@
 import { Entypo } from "@expo/vector-icons";
 import { ImageBackground } from "expo-image";
-import { useEffect, useState } from "react";
+import { router } from "expo-router";
+import { useEffect, useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -8,7 +9,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { Agent, Status } from "@/types";
+import { Agent, ServiceStatus } from "@/types";
 import AgentService from "./AgentService";
 import StatusIcon from "./StatusIcon";
 
@@ -40,31 +41,72 @@ function AgentContainer({ agent }: AgentContainerProps) {
     setIsExpanded(!isExpanded);
   };
 
-  const agentStatus = agent.services.reduce<Status>((prev, service) => {
-    if (service.last_status === null) return prev;
-    const statusOrder = ["ERROR", "FAILURE", "WARNING", "UPDATE", "OK"];
-    return statusOrder.indexOf(service.last_status) < statusOrder.indexOf(prev!)
-      ? service.last_status
-      : prev;
-  }, "OK");
+  const agentStatus = useMemo<ServiceStatus>(() => {
+    const statusOrder: ServiceStatus[] = [
+      "ERROR",
+      "FAILURE",
+      "WARNING",
+      "UPDATE",
+      "OK",
+    ];
+    return agent.services.reduce<ServiceStatus>((prev, service) => {
+      if (service.last_status === null) return prev;
+      if (prev === null) return service.last_status;
+      return statusOrder.indexOf(service.last_status) <
+        statusOrder.indexOf(prev)
+        ? service.last_status
+        : prev;
+    }, "OK");
+  }, [agent.services]);
 
   return (
     <View style={styles.wrapper}>
-      <Pressable onPress={toggleExpand} style={styles.container}>
-        <ImageBackground
-          source={AgentIcon}
-          style={styles.agentIcon}
-          contentFit="contain"
+      <View style={styles.container}>
+        <Pressable
+          onPress={toggleExpand}
+          onLongPress={() =>
+            router.push({
+              pathname: "/edit",
+              params: { id: agent.id, name: agent.name },
+            })
+          }
+          style={styles.mainContent}
         >
-          <StatusIcon status={agentStatus} styles={styles.agentStatusIcon} />
-        </ImageBackground>
-        <Text style={styles.agentName}>{agent.name}</Text>
-        <Entypo
-          name={isExpanded ? "chevron-up" : "chevron-down"}
-          size={20}
-          color="#37A9E1"
-        />
-      </Pressable>
+          <ImageBackground
+            source={AgentIcon}
+            style={styles.agentIcon}
+            contentFit="contain"
+          >
+            {agent.is_online && (
+              <StatusIcon
+                status={agentStatus}
+                styles={styles.agentStatusIcon}
+              />
+            )}
+          </ImageBackground>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.agentName}>{agent.name}</Text>
+
+            <Text
+              style={
+                agent.is_online
+                  ? styles.onlineStatusText
+                  : styles.offlineStatusText
+              }
+            >
+              {agent.is_online ? "Online" : "Offline"}
+            </Text>
+          </View>
+        </Pressable>
+
+        <Pressable onPress={toggleExpand}>
+          <Entypo
+            name={isExpanded ? "chevron-up" : "chevron-down"}
+            size={20}
+            color="#37A9E1"
+          />
+        </Pressable>
+      </View>
       <Animated.View style={[styles.animatedContainer, animatedStyle]}>
         <View
           style={{ position: "absolute", width: "100%" }}
@@ -75,14 +117,17 @@ function AgentContainer({ agent }: AgentContainerProps) {
         >
           <View style={styles.body}>
             {agent.services.map((service) => (
-              <AgentService key={service.service_id} service={service} />
+              <AgentService key={service.id} service={service} />
             ))}
 
             {/* No services feedback */}
             {agent.services.length === 0 && (
-              <Text style={{ color: "#fff" }}>No services found.</Text>
+              <Text style={styles.noServicesText}>No services found.</Text>
             )}
           </View>
+          {agent.ip_address && (
+            <Text style={styles.ipAddress}>{agent.ip_address}</Text>
+          )}
         </View>
       </Animated.View>
     </View>
@@ -108,6 +153,12 @@ const styles = StyleSheet.create({
     padding: 10,
     zIndex: 1,
   },
+  mainContent: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
   animatedContainer: {
     overflow: "hidden",
   },
@@ -126,10 +177,34 @@ const styles = StyleSheet.create({
   agentName: {
     flex: 1,
     fontSize: 16,
-    marginHorizontal: 10,
     textAlign: "center",
     fontFamily: "Poppins-Medium",
     color: "#FFFFFF",
+  },
+  onlineStatusText: {
+    textAlign: "center",
+    fontSize: 12,
+    color: "#84e1aeff",
+  },
+  offlineStatusText: {
+    color: "#e18484ff",
+    fontSize: 12,
+    textAlign: "center",
+  },
+  ipAddress: {
+    padding: 5,
+    fontSize: 14,
+    color: "#ffffffce",
+    textAlign: "center",
+    fontWeight: "300",
+    backgroundColor: "#185e8180",
+  },
+  noServicesText: {
+    color: "#fff",
+    margin: 20,
+    textAlign: "center",
+    fontSize: 16,
+    fontFamily: "Poppins-Light",
   },
 });
 

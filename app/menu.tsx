@@ -56,17 +56,14 @@ export default function ModalScreen() {
       {/* Content */}
       <FlatList
         data={menuItems}
+        contentContainerStyle={styles.menu}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.menuItem}
             // onPress={() => router.push(item.route as `/${string}`)}
           >
-            <Ionicons
-              name={item.icon as any}
-              size={24}
-              style={styles.menuItemIcon}
-            />
+            <Ionicons name={item.icon as any} style={styles.menuItemIcon} />
             <Text style={styles.menuItemText}>{item.title}</Text>
           </TouchableOpacity>
         )}
@@ -128,20 +125,24 @@ const styles = StyleSheet.create({
     opacity: 0.2,
     width: "60%",
   },
+  menu: {
+    gap: 40,
+    marginHorizontal: "auto",
+    marginVertical: 20,
+  },
   menuItem: {
     flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 15,
-    paddingHorizontal: 30,
+    gap: 20,
   },
   menuItemIcon: {
-    marginRight: 20,
+    fontSize: 28,
     color: "#185E81",
   },
   menuItemText: {
     fontFamily: "Poppins",
-    fontSize: 18,
+    fontSize: 20,
     color: "#E8F2F7",
+    marginBottom: -4,
   },
   logoutButton: {
     marginBottom: 60,

@@ -3,6 +3,7 @@ const BACKEND = {
   LOGIN: "api/auth/login/",
   AGENTS: "api/agents/",
   AGENTS_SSE: "api/sse/agents/",
+  AGENT_REGISTRATION: "api/agents/register/complete/",
 };
 
 export default {

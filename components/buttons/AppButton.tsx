@@ -15,7 +15,10 @@ interface AppButtonProps extends ButtonProps {
 
 function Button(props: AppButtonProps) {
   return (
-    <Pressable onPress={props.onPress} style={[styles.container, props.style]}>
+    <Pressable
+      onPress={props.onPress}
+      style={[styles.container, props.disabled && styles.disabled, props.style]}
+    >
       <Text style={styles.title}>{props.title}</Text>
     </Pressable>
   );
@@ -37,6 +40,9 @@ const styles = StyleSheet.create({
     fontFamily: "BrunoAce",
     fontSize: 24,
     textAlign: "center",
+  },
+  disabled: {
+    opacity: 0.5,
   },
 });
 

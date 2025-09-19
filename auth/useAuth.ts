@@ -50,6 +50,17 @@ function useAuth() {
       setAuth(dataWithProfile);
     } catch (error: any) {
       Alert.alert("Login Failed", error.message);
+      let errorMessage = error.message;
+      // Provide a more user-friendly message for generic network errors
+      if (
+        error instanceof TypeError &&
+        error.message === "Network request failed"
+      ) {
+        errorMessage =
+          "Unable to connect to the server. Please check your network connection or try again later.";
+      }
+
+      Alert.alert("Login Failed", errorMessage);
     } finally {
       setLoading(false);
     }
