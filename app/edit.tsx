@@ -36,8 +36,9 @@ export default function EditAgentScreen() {
       );
 
       if (res.ok) {
-        Alert.alert("Success", "Agent name updated successfully.");
-        router.back();
+        // Alert.alert("Success", "Agent name updated successfully.");
+        router.replace("/");
+        setLoading(false);
       } else {
         const errorData = await res.json();
         Alert.alert(
@@ -48,7 +49,6 @@ export default function EditAgentScreen() {
     } catch (error) {
       console.error("Failed to update agent name:", error);
       Alert.alert("Error", "An unexpected error occurred. Please try again.");
-    } finally {
       setLoading(false);
     }
   };

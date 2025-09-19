@@ -9,7 +9,7 @@ import ConnectivityStatus from "@/components/animations/ConnectivityStatus";
 import AppScreen from "@/components/containers/AppScreen";
 import useAgentsSSE from "@/services/useAgentsSSE";
 
-export default function OverviewScreen() {
+function OverviewScreen() {
   const { auth } = useAuth();
   const { agents, isConnected } = useAgentsSSE();
 
@@ -33,13 +33,21 @@ export default function OverviewScreen() {
       </View>
 
       {/* Content */}
-      <FlatList
-        data={agents}
-        style={styles.list}
-        contentContainerStyle={styles.listContentContainer}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <AgentContainer agent={item} />}
-      />
+      {isConnected ? (
+        agents.length === 0 ? (
+          <NoAgentsMessage />
+        ) : (
+          <FlatList
+            data={agents}
+            style={styles.list}
+            contentContainerStyle={styles.listContentContainer}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => <AgentContainer agent={item} />}
+          />
+        )
+      ) : (
+        <DisconnectedMessage />
+      )}
 
       {/* Action Button */}
       <Link href="/add" style={styles.actionButton}>
@@ -48,6 +56,30 @@ export default function OverviewScreen() {
         </View>
       </Link>
     </AppScreen>
+  );
+}
+
+function DisconnectedMessage() {
+  return (
+    <View style={styles.screenMessageContainer}>
+      <Text style={styles.disconnectedMessage}>
+        Disconnected from the server
+      </Text>
+    </View>
+  );
+}
+
+function NoAgentsMessage() {
+  return (
+    <View style={styles.screenMessageContainer}>
+      <Text style={styles.noAgentsMessage}>
+        There are no agents registered with your account.
+      </Text>
+      <Text style={styles.noAgentsMessage2}>
+        Install the Service Status Indicator Agent on your Linux machine and use
+        the CLI to register your agent.
+      </Text>
+    </View>
   );
 }
 
@@ -104,4 +136,31 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  screenMessageContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    bottom: StatusBar.currentHeight || 0, // Screen centered by removes the bar difference
+  },
+  disconnectedMessage: {
+    color: "#e13759ff",
+    fontFamily: "Poppins-ExtraLight",
+    fontSize: 16,
+  },
+  noAgentsMessage: {
+    padding: 20,
+    textAlign: "center",
+    color: "#84C2E1",
+    fontFamily: "Poppins",
+    fontSize: 16,
+  },
+  noAgentsMessage2: {
+    paddingHorizontal: 20,
+    textAlign: "center",
+    color: "#84C2E180",
+    fontFamily: "Poppins-ExtraLight",
+    fontSize: 14,
+  },
 });
+
+export default OverviewScreen;

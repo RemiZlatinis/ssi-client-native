@@ -43,8 +43,11 @@ export default function RegisterAgentCodeInput() {
         );
       else if (res.status === 200) {
         const data = await res.json();
-        console.log(data);
-        router.replace("/edit");
+        // router.replace({
+        //   pathname: "/edit",
+        //   params: { id: data.id, name: data.name },
+        // });
+        router.replace("/");
       } else console.warn(`Unexpected Response:${res}`);
     } catch (error) {
       console.log(error);
