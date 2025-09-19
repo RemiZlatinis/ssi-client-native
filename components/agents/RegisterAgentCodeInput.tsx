@@ -1,8 +1,8 @@
 import { router } from "expo-router";
-import type { OTPInputRef, OTPInput, type SlotProps } from "input-otp-native";
+import { OTPInputRef, OTPInput, SlotProps } from "input-otp-native";
 
 import { useEffect, useRef } from "react";
-import { Alert, StyleSheet, Text, View, type ViewStyle } from "react-native";
+import { Alert, StyleSheet, Text, View, ViewStyle } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
