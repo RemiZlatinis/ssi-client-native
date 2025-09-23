@@ -69,6 +69,7 @@ function useAuth() {
   async function logout() {
     await authStorage.removeAuthObject();
     setAuth(null);
+    // TODO: Unregister the device to disable notifications
   }
 
   async function restoreAuthObject() {
