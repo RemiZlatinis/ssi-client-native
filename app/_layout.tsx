@@ -79,10 +79,7 @@ function RootLayoutNav() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Protected guard={isAuthenticated}>
           <Stack.Screen name="index" />
-          <Stack.Screen
-            name="menu"
-            options={{ presentation: "modal", animation: "fade_from_bottom" }}
-          />
+          <Stack.Screen name="menu" />
           <Stack.Screen
             name="add"
             options={{ presentation: "modal", animation: "fade_from_bottom" }}

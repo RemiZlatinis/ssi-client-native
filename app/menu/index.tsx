@@ -1,4 +1,3 @@
-import { Image } from "expo-image";
 import { router } from "expo-router";
 import {
   FlatList,
@@ -8,52 +7,48 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import EvilIcons from "@expo/vector-icons/EvilIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
-import AppScreen from "@/components/containers/AppScreen";
 import Button from "@/components/buttons/AppButton";
+import { Image } from "expo-image";
 import useAuth from "@/auth/useAuth";
 
 const menuItems = [
   { id: "1", title: "Profile", icon: "person-outline", route: "/profile" },
-  { id: "2", title: "Settings", icon: "settings-outline", route: "/settings" },
   {
-    id: "3",
+    id: "2",
+    title: "Notifications",
+    icon: "notifications-outline",
+    route: "/menu/notifications",
+  },
+  { id: "3", title: "Settings", icon: "settings-outline", route: "/settings" },
+  {
+    id: "4",
     title: "Help & Support",
     icon: "help-circle-outline",
     route: "/support",
   },
   {
-    id: "4",
+    id: "5",
     title: "About",
     icon: "information-circle-outline",
     route: "/about",
   },
 ];
 
-export default function ModalScreen() {
+export default function MenuScreen() {
   const { auth, logout } = useAuth();
 
   return (
-    <AppScreen style={styles.container}>
-      <Text style={styles.title}>Menu</Text>
-      <EvilIcons
-        name="close"
-        size={32}
-        style={styles.closeButton}
-        onPress={() => router.back()}
-      />
-
+    <>
       <View style={styles.userContainer}>
         <Image style={styles.userPicture} source={auth?.user?.picture} />
         <Text style={styles.username}>
           {auth?.user?.first_name} {auth?.user?.last_name}
         </Text>
       </View>
+
       <View style={styles.separator} />
 
-      {/* Content */}
       <FlatList
         data={menuItems}
         contentContainerStyle={styles.menu}
@@ -61,7 +56,7 @@ export default function ModalScreen() {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.menuItem}
-            // onPress={() => router.push(item.route as `/${string}`)}
+            onPress={() => router.push(item.route as `/${string}`)}
           >
             <Ionicons name={item.icon as any} style={styles.menuItemIcon} />
             <Text style={styles.menuItemText}>{item.title}</Text>
@@ -72,16 +67,11 @@ export default function ModalScreen() {
       <View style={styles.separator} />
 
       <Button title="Logout" onPress={logout} style={styles.logoutButton} />
-    </AppScreen>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: StatusBar.currentHeight,
-    flex: 1,
-    paddingHorizontal: 20,
-  },
   title: {
     marginVertical: 20,
     fontSize: 20,
@@ -125,6 +115,9 @@ const styles = StyleSheet.create({
     opacity: 0.2,
     width: "60%",
   },
+  logoutButton: {
+    marginBottom: 60,
+  },
   menu: {
     gap: 40,
     marginHorizontal: "auto",
@@ -143,8 +136,5 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#E8F2F7",
     marginBottom: -4,
-  },
-  logoutButton: {
-    marginBottom: 60,
   },
 });
