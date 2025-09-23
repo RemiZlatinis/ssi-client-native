@@ -8,6 +8,7 @@ const BACKEND = {
   AGENTS: "api/agents/",
   AGENTS_SSE: "api/sse/agents/",
   AGENT_REGISTRATION: "api/agents/register/complete/",
+  NOTIFICATIONS_DEVICES: "api/notifications/devices/",
 };
 
 export default {
