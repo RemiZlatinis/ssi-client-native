@@ -105,7 +105,6 @@ function useNotifications() {
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) => {
       if (!token) return;
-      console.debug(Device);
 
       registerDevice({
         token,
