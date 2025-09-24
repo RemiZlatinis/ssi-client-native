@@ -1,72 +1,36 @@
 import { Image } from "expo-image";
-import { useState } from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
+import { StyleSheet, Text, useColorScheme, View } from "react-native";
 
+import LoginWithGoogleButton from "@/auth/components/LoginWithGoogleButton.native";
 import useAuth from "@/auth/useAuth";
-import Button from "@/components/buttons/AppButton";
+import LoaderCat from "@/components/animations/LoaderCat";
 import AppScreen from "@/components/containers/AppScreen";
-import TextInput from "@/components/texts/AppTextInput";
 
 const logo = require("@/assets/images/icon.png");
 
 export default function WelcomeScreen() {
+  const { loading } = useAuth();
   const dark = useColorScheme() === "dark";
-  const { login, loading } = useAuth();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
 
   return (
     <AppScreen style={styles.screen}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.container}
-      >
+      {/* Brand */}
+      <View style={styles.brandContainer}>
         {/* Logo */}
         <View style={[styles.logoContainer, dark && styles.logoContainerDark]}>
           <Image source={logo} style={styles.logo} />
         </View>
-
-        {/* Brand */}
-        <View>
-          <Text style={styles.name}>Service Status Indicator</Text>
-          <Text style={styles.subtitle}>Simplified Monitoring Framework</Text>
+        <Text style={styles.title}>Service Status Indicator</Text>
+        <Text style={styles.subtitle}>Simplified Monitoring Framework</Text>
+      </View>
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>Login...</Text>
+          <LoaderCat />
         </View>
-
-        {/* Content */}
-        <View style={{ width: "100%", gap: 10 }}>
-          <TextInput
-            textInputProps={{
-              placeholder: "Username",
-              textContentType: "username",
-              autoCapitalize: "none",
-              value: username,
-              onChangeText: setUsername,
-            }}
-          />
-          <TextInput
-            textInputProps={{
-              placeholder: "Password",
-              secureTextEntry: true,
-              textContentType: "password",
-              autoCapitalize: "none",
-              value: password,
-              onChangeText: setPassword,
-            }}
-          />
-        </View>
-        <Button
-          title={loading ? "Logging in..." : "Login"}
-          onPress={() => login(username, password)}
-          disabled={loading}
-        />
-      </KeyboardAvoidingView>
+      ) : (
+        <LoginWithGoogleButton />
+      )}
     </AppScreen>
   );
 }
@@ -75,41 +39,49 @@ const styles = StyleSheet.create({
   screen: {
     padding: 20,
     backgroundColor: "#185E81",
+    paddingBottom: 60,
   },
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "space-evenly",
-  },
-
-  // Logo
-  logoContainer: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    backgroundColor: "#fff",
+  brandContainer: {
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: "auto",
+    marginTop: 100,
+  },
+  logoContainer: {
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 75,
+    height: 150,
+    justifyContent: "center",
+    width: 150,
   },
   logoContainerDark: {
     backgroundColor: "#091620",
   },
   logo: {
-    width: 100,
     height: 100,
+    width: 100,
   },
-
-  // Brand
-  name: {
+  title: {
+    color: "#E8F2F7",
     fontFamily: "BrunoAce",
     fontSize: 20,
+    marginTop: 20,
     textAlign: "center",
-    color: "#E8F2F7",
   },
   subtitle: {
     color: "#84C2E1",
     fontFamily: "Poppins-Light",
     fontSize: 14,
     textAlign: "center",
+  },
+  loadingContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  loadingText: {
+    color: "#84C2E1",
+    fontFamily: "BrunoAce",
+    fontSize: 20,
   },
 });

@@ -1,5 +1,4 @@
 import {
-  Poppins_100Thin,
   Poppins_200ExtraLight,
   Poppins_300Light,
   Poppins_400Regular,
@@ -52,7 +51,7 @@ function RootLayoutNav() {
     ...FontAwesome.font,
   });
   const dark = useColorScheme();
-  const { auth, restoreAuthObject, loading: loadingAuth } = useAuth();
+  const { auth, restoreAuthObject } = useAuth();
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
@@ -64,14 +63,12 @@ function RootLayoutNav() {
   }, []);
 
   useEffect(() => {
-    if (fontsLoaded && !loadingAuth) {
+    if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded, loadingAuth]);
+  }, [fontsLoaded]);
 
-  if (!fontsLoaded || loadingAuth) {
-    return null;
-  }
+  if (!fontsLoaded) return null;
 
   const isAuthenticated = auth != null;
   return (

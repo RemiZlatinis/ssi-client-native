@@ -61,6 +61,7 @@ export default {
         },
       ],
       "expo-notifications",
+      "@react-native-google-signin/google-signin",
     ],
     experiments: {
       typedRoutes: true,

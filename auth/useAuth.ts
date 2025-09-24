@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Alert } from "react-native";
 
 import config from "@/config";
@@ -6,8 +5,7 @@ import { useAuthContext } from "./AuthContext";
 import authStorage from "./authStorage";
 
 function useAuth() {
-  const { auth, setAuth } = useAuthContext();
-  const [loading, setLoading] = useState(false);
+  const { auth, setAuth, loading, setLoading } = useAuthContext();
 
   async function login(username: string, password: string) {
     if (!username || !password) {
@@ -36,18 +34,8 @@ function useAuth() {
         throw new Error(message);
       }
 
-      // Temporarily profile image
-      // Backend don't provide user picture yet
-      const dataWithProfile = {
-        ...data,
-        user: {
-          ...data.user,
-          picture: "https://avatars.githubusercontent.com/u/39838694?v=4",
-        },
-      };
-
-      await authStorage.storeAuthObject(dataWithProfile);
-      setAuth(dataWithProfile);
+      await authStorage.storeAuthObject(data);
+      setAuth(data);
     } catch (error: any) {
       Alert.alert("Login Failed", error.message);
       let errorMessage = error.message;
@@ -84,6 +72,7 @@ function useAuth() {
     setAuth,
     login,
     loading,
+    setLoading,
     logout,
     restoreAuthObject,
   };

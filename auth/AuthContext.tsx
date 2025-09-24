@@ -5,15 +5,18 @@ import { AuthObject } from "@/types";
 interface AuthContextType {
   auth: AuthObject | null;
   setAuth: (auth: AuthObject | null) => void;
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [auth, setAuth] = useState<AuthObject | null>(null);
+  const [loading, setLoading] = useState(true);
 
   return (
-    <AuthContext.Provider value={{ auth, setAuth }}>
+    <AuthContext.Provider value={{ auth, setAuth, loading, setLoading }}>
       {children}
     </AuthContext.Provider>
   );
