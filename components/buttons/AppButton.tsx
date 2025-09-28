@@ -11,6 +11,7 @@ interface AppButtonProps extends ButtonProps {
   title: string;
   onPress: () => void;
   style?: ViewStyle;
+  fontSize?: number;
 }
 
 function Button(props: AppButtonProps) {
@@ -19,7 +20,9 @@ function Button(props: AppButtonProps) {
       onPress={props.onPress}
       style={[styles.container, props.disabled && styles.disabled, props.style]}
     >
-      <Text style={styles.title}>{props.title}</Text>
+      <Text style={[styles.title, { fontSize: props.fontSize || 24 }]}>
+        {props.title}
+      </Text>
     </Pressable>
   );
 }
