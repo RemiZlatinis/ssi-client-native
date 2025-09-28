@@ -1,8 +1,13 @@
 import {
+  Poppins_100Thin,
   Poppins_200ExtraLight,
   Poppins_300Light,
   Poppins_400Regular,
   Poppins_500Medium,
+  Poppins_600SemiBold,
+  Poppins_700Bold,
+  Poppins_800ExtraBold,
+  Poppins_900Black,
 } from "@expo-google-fonts/poppins";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
@@ -47,10 +52,16 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const [fontsLoaded, error] = useFonts({
     BrunoAce: require("../assets/fonts/BrunoAce-Regular.ttf"),
-    "Poppins-ExtraLight": Poppins_200ExtraLight,
-    "Poppins-Light": Poppins_300Light,
+    "Poppins-thin": Poppins_100Thin,
+    "Poppins-extralight": Poppins_200ExtraLight,
+    "Poppins-light": Poppins_300Light,
     Poppins: Poppins_400Regular,
-    "Poppins-Medium": Poppins_500Medium,
+    "Poppins-normal": Poppins_400Regular,
+    "Poppins-medium": Poppins_500Medium,
+    "Poppins-semibold": Poppins_600SemiBold,
+    "Poppins-bold": Poppins_700Bold,
+    "Poppins-extrabold": Poppins_800ExtraBold,
+    "Poppins-black": Poppins_900Black,
     ...FontAwesome.font,
   });
   const dark = useColorScheme();
@@ -87,6 +98,10 @@ function RootLayoutNav() {
           <Stack.Screen
             name="edit"
             options={{ presentation: "modal", animation: "fade_from_bottom" }}
+          />
+          <Stack.Screen
+            name="editDeviceName"
+            options={{ presentation: "fullScreenModal" }}
           />
         </Stack.Protected>
         <Stack.Protected guard={!isAuthenticated}>
