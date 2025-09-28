@@ -56,6 +56,7 @@ function mapAgents(agents: any[]): Agent[] {
     id: agent.id,
     name: agent.name,
     is_online: agent.is_online,
+    ip_address: agent.ip_address,
     services: agent.services.map((service: any) => ({
       name: service.name,
       description: service.description,
