@@ -4,15 +4,15 @@ import { Link } from "expo-router";
 import { FlatList, StatusBar, StyleSheet, Text, View } from "react-native";
 
 import useAuth from "@/auth/useAuth";
+import { useAgents } from "@/contexts/AgentsContext";
 import AgentContainer from "@/components/agents/AgentContainer";
 import ConnectivityStatus from "@/components/animations/ConnectivityStatus";
 import AppScreen from "@/components/containers/AppScreen";
-import useAgentsSSE from "@/services/useAgentsSSE";
 import useNotifications from "@/services/useNotifications";
 
 function OverviewScreen() {
   const { auth } = useAuth();
-  const { agents, isConnected } = useAgentsSSE();
+  const { agents, isConnected } = useAgents();
   useNotifications();
 
   return (

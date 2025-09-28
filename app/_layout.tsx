@@ -17,6 +17,7 @@ import { useEffect } from "react";
 import { useColorScheme } from "react-native";
 import "react-native-reanimated";
 
+import { AgentsProvider } from "@/contexts/AgentsContext";
 import { AuthProvider } from "@/auth/AuthContext";
 import useAuth from "@/auth/useAuth";
 
@@ -36,7 +37,9 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <RootLayoutNav />
+      <AgentsProvider>
+        <RootLayoutNav />
+      </AgentsProvider>
     </AuthProvider>
   );
 }
