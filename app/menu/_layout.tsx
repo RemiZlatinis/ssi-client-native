@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { router, Slot } from "expo-router";
+import { router, Slot, usePathname } from "expo-router";
 import { StatusBar, StyleSheet, Text, View } from "react-native";
 
 import AppScreen from "@/components/containers/AppScreen";
