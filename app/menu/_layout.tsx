@@ -5,16 +5,20 @@ import { StatusBar, StyleSheet, Text, View } from "react-native";
 import AppScreen from "@/components/containers/AppScreen";
 
 export default function MenuLayout() {
+  const pathname = usePathname();
+
   return (
     <AppScreen style={styles.layout}>
       <View style={styles.header}>
         <View style={styles.headerActionContainer}>
-          <MaterialCommunityIcons
-            name="arrow-left"
-            size={32}
-            style={styles.actionButton}
-            onPress={() => router.back()}
-          />
+          {pathname !== "/menu" && (
+            <MaterialCommunityIcons
+              name="arrow-left"
+              size={32}
+              style={styles.actionButton}
+              onPress={() => router.back()}
+            />
+          )}
         </View>
         <Text style={styles.title}>Menu</Text>
         <View style={styles.headerActionContainer}>
@@ -22,7 +26,9 @@ export default function MenuLayout() {
             name="close"
             size={32}
             style={styles.actionButton}
-            onPress={() => router.push("/")}
+            onPress={() =>
+              pathname === "/menu" ? router.back() : router.dismissTo("/")
+            }
           />
         </View>
       </View>
@@ -44,7 +50,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 20,
   },
-  headerActionContainer: {},
+  headerActionContainer: {
+    width: 32,
+    height: 32,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   actionButton: {
     fontSize: 32,
     color: "#E8F2F7",
