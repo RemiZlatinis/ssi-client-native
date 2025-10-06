@@ -40,6 +40,19 @@ function NotificationsSettingsScreen() {
     fetchDevices();
   }, [fetchDevices]);
 
+  const handleToggleIsActive = (deviceId: number) => {
+    setDevices((prevDevices) =>
+      prevDevices.map((device) =>
+        device.id === deviceId
+          ? {
+              ...device,
+              status: device.status === "active" ? "inactive" : "active",
+            }
+          : device,
+      ),
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Notifications Settings</Text>
@@ -52,7 +65,11 @@ function NotificationsSettingsScreen() {
         </View>
       ) : (
         devices.map((device) => (
-          <NotificationDevice key={device.id} device={device} />
+          <NotificationDevice
+            key={device.id}
+            device={device}
+            onIsActiveToggle={() => handleToggleIsActive(device.id)}
+          />
         ))
       )}
     </View>

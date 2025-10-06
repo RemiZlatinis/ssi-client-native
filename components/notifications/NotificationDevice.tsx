@@ -1,25 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Switch, Alert, Pressable } from "react-native";
 import { router } from "expo-router";
+import React, { useState } from "react";
+import { Alert, Pressable, StyleSheet, Switch, View } from "react-native";
 
-import { Device } from "@/types/notifications";
-import config from "@/config";
 import { useAuthContext } from "@/auth/AuthContext";
-import AppText from "@/components/texts/AppText";
 import AppButton from "@/components/buttons/AppButton";
 import AppContainer from "@/components/containers/AppContainer";
+import AppText from "@/components/texts/AppText";
+import config from "@/config";
+import { Device } from "@/types/notifications";
 
-function NotificationDevice({ device }: { device: Device }) {
+function NotificationDevice({
+  device,
+  onIsActiveToggle,
+}: {
+  device: Device;
+  onIsActiveToggle: () => void;
+}) {
   const { auth } = useAuthContext();
-  const [isActive, setIsActive] = useState(device.status === "active");
   const [updating, setUpdating] = useState(false);
   const [testing, setTesting] = useState(false);
-
-  useEffect(() => {
-    if (!updating && !testing) {
-      setIsActive(device.status === "active");
-    }
-  }, [device.status, updating, testing]);
 
   const toggleStatus = async () => {
     if (!auth) return;
@@ -33,11 +32,13 @@ function NotificationDevice({ device }: { device: Device }) {
             Authorization: `Bearer ${auth.access}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ status: isActive ? "inactive" : "active" }),
+          body: JSON.stringify({
+            status: device.status === "active" ? "inactive" : "active",
+          }),
         },
       );
 
-      if (response.ok) setIsActive(!isActive);
+      if (response.ok) onIsActiveToggle();
       else Alert.alert("Error", "Failed to update device status");
       setUpdating(false);
     } catch {
@@ -94,7 +95,7 @@ function NotificationDevice({ device }: { device: Device }) {
           Active
         </AppText>
         <Switch
-          value={isActive}
+          value={device.status === "active"}
           onValueChange={toggleStatus}
           disabled={updating}
         />
