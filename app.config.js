@@ -12,6 +12,9 @@ export default {
       image: "./assets/images/splash-icon.png",
       resizeMode: "contain",
       backgroundColor: "#e8f2f7",
+      dark: {
+        backgroundColor: "#091620",
+      },
     },
     ios: {
       supportsTablet: true,
@@ -29,6 +32,9 @@ export default {
       adaptiveIcon: {
         foregroundImage: "./assets/images/adaptive-icon.png",
         backgroundColor: "#e8f2f7",
+        dark: {
+          backgroundColor: "#091620",
+        },
       },
       package: "com.remizlatinis.ssiclientmobile",
       userInterfaceStyle: "automatic",
