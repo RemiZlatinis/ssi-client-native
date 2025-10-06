@@ -1,10 +1,12 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, Slot, usePathname } from "expo-router";
-import { StatusBar, StyleSheet, Text, View } from "react-native";
+import { StatusBar, StyleSheet, useColorScheme, View } from "react-native";
 
 import AppScreen from "@/components/containers/AppScreen";
+import Text from "@/components/texts/AppText";
 
 export default function MenuLayout() {
+  const dark = useColorScheme() === "dark";
   const pathname = usePathname();
 
   return (
@@ -15,8 +17,8 @@ export default function MenuLayout() {
             <MaterialCommunityIcons
               name="arrow-left"
               size={32}
-              style={styles.actionButton}
               onPress={() => router.back()}
+              color={dark ? "#E8F2F7" : "#185E81"}
             />
           )}
         </View>
@@ -25,7 +27,7 @@ export default function MenuLayout() {
           <MaterialCommunityIcons
             name="close"
             size={32}
-            style={styles.actionButton}
+            color={dark ? "#E8F2F7" : "#185E81"}
             onPress={() =>
               pathname === "/menu" ? router.back() : router.dismissTo("/")
             }
@@ -56,13 +58,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  actionButton: {
-    fontSize: 32,
-    color: "#E8F2F7",
-  },
   title: {
     fontSize: 24,
     fontFamily: "BrunoAce",
-    color: "#E8F2F7",
   },
 });

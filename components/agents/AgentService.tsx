@@ -1,8 +1,9 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import Colors from "@/constants/Colors";
 import { Service } from "@/types";
 import StatusIcon from "./StatusIcon";
+import Text from "../texts/AppText";
 
 interface AgentServiceProps {
   service: Service;
@@ -16,7 +17,9 @@ function AgentService({ service }: AgentServiceProps) {
       </View>
       <View style={styles.detailContainer}>
         <View style={styles.detailInnerContainer}>
-          <Text style={styles.serviceName}>{service.name}</Text>
+          <Text size={14} fontWidth="medium">
+            {service.name}
+          </Text>
           <Text style={styles.serviceLastUpdate}>
             {HumanizeDate(service.last_seen || undefined)}
           </Text>
@@ -49,11 +52,6 @@ const styles = StyleSheet.create({
     maxHeight: 20,
     flexDirection: "row",
     alignItems: "baseline",
-  },
-  serviceName: {
-    fontFamily: "Poppins",
-    fontSize: 14,
-    color: Colors.text,
   },
   serviceLastUpdate: {
     marginLeft: 5,

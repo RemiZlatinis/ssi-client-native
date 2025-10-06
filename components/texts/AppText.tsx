@@ -22,7 +22,7 @@ const _colorsDark = {
 };
 
 interface AppTextProps extends TextProps {
-  fontWidth:
+  fontWidth?:
     | "thin"
     | "extralight"
     | "light"
@@ -34,12 +34,14 @@ interface AppTextProps extends TextProps {
     | "black";
   color?: keyof typeof _colors;
   size?: number;
+  align?: "auto" | "center" | "justify" | "left" | "right";
 }
 
 function Text({
-  fontWidth,
+  fontWidth = "normal",
   color = "primary",
   size = 20,
+  align = "auto",
   ...props
 }: AppTextProps) {
   const dark = useColorScheme() === "dark";
@@ -52,6 +54,7 @@ function Text({
           fontFamily: `Poppins-${fontWidth}`,
           fontSize: size,
           color: colors[color],
+          textAlign: align,
         },
         props.style,
       ]}

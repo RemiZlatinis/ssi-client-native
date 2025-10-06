@@ -1,16 +1,10 @@
-import { router } from "expo-router";
-import {
-  FlatList,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import Button from "@/components/buttons/AppButton";
-import { Image } from "expo-image";
 import useAuth from "@/auth/useAuth";
+import Button from "@/components/buttons/AppButton";
+import Text from "@/components/texts/AppText";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Image } from "expo-image";
+import { router } from "expo-router";
+import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 
 const menuItems = [
   { id: "1", title: "Profile", icon: "person-outline", route: null },
@@ -42,7 +36,7 @@ export default function MenuScreen() {
     <>
       <View style={styles.userContainer}>
         <Image style={styles.userPicture} source={auth?.user?.picture} />
-        <Text style={styles.username}>
+        <Text size={24} fontWidth="medium">
           {auth?.user?.first_name} {auth?.user?.last_name}
         </Text>
       </View>
@@ -61,7 +55,7 @@ export default function MenuScreen() {
             disabled={item.route === null}
           >
             <Ionicons name={item.icon as any} style={styles.menuItemIcon} />
-            <Text style={styles.menuItemText}>{item.title}</Text>
+            <Text size={20}>{item.title}</Text>
           </TouchableOpacity>
         )}
       />
@@ -79,12 +73,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#E8F2F7",
   },
-  closeButton: {
-    position: "absolute",
-    top: (StatusBar.currentHeight || 0) + 15,
-    right: 20,
-    color: "#E8F2F7",
-  },
 
   userContainer: {
     flexDirection: "row",
@@ -98,11 +86,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     height: 48,
     width: 48,
-  },
-  username: {
-    fontFamily: "Poppins-Medium",
-    fontSize: 24,
-    color: "#E8F2F7",
   },
 
   logoutButton: {
@@ -124,11 +107,5 @@ const styles = StyleSheet.create({
   menuItemIcon: {
     fontSize: 28,
     color: "#185E81",
-  },
-  menuItemText: {
-    fontFamily: "Poppins",
-    fontSize: 20,
-    color: "#E8F2F7",
-    marginBottom: -4,
   },
 });

@@ -2,7 +2,7 @@ import { Entypo } from "@expo/vector-icons";
 import { ImageBackground } from "expo-image";
 import { router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, useColorScheme, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -12,6 +12,7 @@ import Animated, {
 import { Agent, ServiceStatus } from "@/types";
 import AgentService from "./AgentService";
 import StatusIcon from "./StatusIcon";
+import Text from "../texts/AppText";
 
 const AgentIcon = require("@/assets/icons/server.png");
 
@@ -20,6 +21,7 @@ interface AgentContainerProps {
 }
 
 function AgentContainer({ agent }: AgentContainerProps) {
+  const dark = useColorScheme() === "dark";
   const [isExpanded, setIsExpanded] = useState(false);
   const [bodyHeight, setBodyHeight] = useState(0);
   const height = useSharedValue(0);
@@ -61,8 +63,8 @@ function AgentContainer({ agent }: AgentContainerProps) {
   }, [agent.services]);
 
   return (
-    <View style={styles.wrapper}>
-      <View style={styles.container}>
+    <View style={[styles.wrapper, dark && styles.wrapperDark]}>
+      <View style={[styles.container, dark && styles.containerDark]}>
         <Pressable
           onPress={toggleExpand}
           onLongPress={() =>
@@ -86,7 +88,9 @@ function AgentContainer({ agent }: AgentContainerProps) {
             )}
           </ImageBackground>
           <View style={{ flex: 1 }}>
-            <Text style={styles.agentName}>{agent.name}</Text>
+            <Text style={styles.agentName} fontWidth="medium">
+              {agent.name}
+            </Text>
 
             <Text
               style={
@@ -137,7 +141,7 @@ function AgentContainer({ agent }: AgentContainerProps) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    backgroundColor: "#1C2124",
+    backgroundColor: "#bddeefff",
     borderRadius: 10,
     marginBottom: 10,
     overflow: "hidden",
@@ -145,14 +149,20 @@ const styles = StyleSheet.create({
     width: "100%",
     alignSelf: "center",
   },
+  wrapperDark: {
+    backgroundColor: "#1C2124",
+  },
   container: {
     alignItems: "center",
-    backgroundColor: "#2F393E",
+    backgroundColor: "#E8F2F7",
     borderRadius: 10,
     flexDirection: "row",
     height: 60,
     padding: 10,
     zIndex: 1,
+  },
+  containerDark: {
+    backgroundColor: "#2F393E",
   },
   mainContent: {
     flex: 1,
@@ -176,11 +186,11 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   agentName: {
-    flex: 1,
-    fontSize: 16,
+    // flex: 1,
+    // fontSize: 18,
     textAlign: "center",
-    fontFamily: "Poppins-Medium",
-    color: "#FFFFFF",
+    // fontFamily: "Poppins-Medium",
+    // color: "#FFFFFF",
   },
   onlineStatusText: {
     textAlign: "center",

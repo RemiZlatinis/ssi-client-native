@@ -14,7 +14,7 @@ function AppScreen(props: ViewProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#e8f2f7",
+    backgroundColor: "#84C2E1",
   },
   containerDark: {
     backgroundColor: "#091620",
