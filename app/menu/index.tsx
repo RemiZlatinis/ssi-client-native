@@ -13,25 +13,25 @@ import { Image } from "expo-image";
 import useAuth from "@/auth/useAuth";
 
 const menuItems = [
-  { id: "1", title: "Profile", icon: "person-outline", route: "/profile" },
+  { id: "1", title: "Profile", icon: "person-outline", route: null },
   {
     id: "2",
     title: "Notifications",
     icon: "notifications-outline",
     route: "/menu/notifications",
   },
-  { id: "3", title: "Settings", icon: "settings-outline", route: "/settings" },
+  { id: "3", title: "Settings", icon: "settings-outline", route: null },
   {
     id: "4",
     title: "Help & Support",
     icon: "help-circle-outline",
-    route: "/support",
+    route: null,
   },
   {
     id: "5",
     title: "About",
     icon: "information-circle-outline",
-    route: "/about",
+    route: null,
   },
 ];
 
@@ -47,24 +47,24 @@ export default function MenuScreen() {
         </Text>
       </View>
 
-      <View style={styles.separator} />
-
       <FlatList
         data={menuItems}
         contentContainerStyle={styles.menu}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() => router.push(item.route as `/${string}`)}
+            style={[
+              styles.menuItem,
+              item.route === null && styles.menuItemDisabled,
+            ]}
+            onPress={() => (item.route ? router.push(item.route) : undefined)}
+            disabled={item.route === null}
           >
             <Ionicons name={item.icon as any} style={styles.menuItemIcon} />
             <Text style={styles.menuItemText}>{item.title}</Text>
           </TouchableOpacity>
         )}
       />
-
-      <View style={styles.separator} />
 
       <Button title="Logout" onPress={logout} style={styles.logoutButton} />
     </>
@@ -86,46 +86,40 @@ const styles = StyleSheet.create({
     color: "#E8F2F7",
   },
 
-  // User Info
   userContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: 20,
-    justifyContent: "center",
+    marginVertical: 20,
   },
   userPicture: {
     borderColor: "#185E81",
     borderRadius: 50,
     borderWidth: 1,
-    height: 64,
-    width: 64,
+    height: 48,
+    width: 48,
   },
   username: {
-    textAlign: "center",
     fontFamily: "Poppins-Medium",
     fontSize: 24,
     color: "#E8F2F7",
   },
 
-  separator: {
-    marginVertical: 20,
-    height: 1,
-    backgroundColor: "#185E81",
-    alignSelf: "center",
-    opacity: 0.2,
-    width: "60%",
-  },
   logoutButton: {
     marginBottom: 60,
+    backgroundColor: "#185E81",
   },
   menu: {
-    gap: 40,
-    marginHorizontal: "auto",
-    marginVertical: 20,
+    gap: 30,
+    // marginHorizontal: 15,
+    marginVertical: 40,
   },
   menuItem: {
     flexDirection: "row",
     gap: 20,
+  },
+  menuItemDisabled: {
+    opacity: 0.3,
   },
   menuItemIcon: {
     fontSize: 28,
