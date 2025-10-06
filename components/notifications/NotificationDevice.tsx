@@ -23,6 +23,8 @@ function NotificationDevice({
   const toggleStatus = async () => {
     if (!auth) return;
     setUpdating(true);
+
+    onIsActiveToggle();
     try {
       const response = await fetch(
         `${config.BACKEND.BASE_URL}${config.BACKEND.NOTIFICATIONS_DEVICES}${device.id}/`,
@@ -38,10 +40,13 @@ function NotificationDevice({
         },
       );
 
-      if (response.ok) onIsActiveToggle();
-      else Alert.alert("Error", "Failed to update device status");
+      if (!response.ok) {
+        onIsActiveToggle();
+        Alert.alert("Error", "Failed to update device status");
+      }
       setUpdating(false);
     } catch {
+      onIsActiveToggle();
       Alert.alert("Error", "Network error");
       setUpdating(false);
     }
