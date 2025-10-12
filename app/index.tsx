@@ -9,10 +9,12 @@ import AgentContainer from "@/components/agents/AgentContainer";
 import ConnectivityStatus from "@/components/animations/ConnectivityStatus";
 import AppScreen from "@/components/containers/AppScreen";
 import useNotifications from "@/services/useNotifications";
+import { useNetwork } from "@/hooks";
 
 function OverviewScreen() {
   const { auth } = useAuth();
   const { agents, isConnected } = useAgents();
+  const { isConnected: isNetworkConnected, isInternetReachable } = useNetwork();
   useNotifications();
 
   return (
@@ -47,6 +49,10 @@ function OverviewScreen() {
             renderItem={({ item }) => <AgentContainer agent={item} />}
           />
         )
+      ) : !isNetworkConnected ? (
+        <DisconnectedMessage message="You are offline (WiFi or mobile data)" />
+      ) : !isInternetReachable ? (
+        <DisconnectedMessage message="You are offline (Internet is unreachable)" />
       ) : (
         <DisconnectedMessage />
       )}
@@ -61,12 +67,14 @@ function OverviewScreen() {
   );
 }
 
-function DisconnectedMessage() {
+function DisconnectedMessage({
+  message = "Disconnected from the server",
+}: {
+  message?: string;
+}) {
   return (
     <View style={styles.screenMessageContainer}>
-      <Text style={styles.disconnectedMessage}>
-        Disconnected from the server
-      </Text>
+      <Text style={styles.disconnectedMessage}>{message}</Text>
     </View>
   );
 }
