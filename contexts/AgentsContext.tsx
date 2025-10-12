@@ -17,6 +17,7 @@ interface AgentsContextType {
   agents: Agent[];
   loading: boolean;
   isConnected: boolean;
+  refreshAgents: () => void;
 }
 
 const AgentsContext = createContext<AgentsContextType | undefined>(undefined);
@@ -35,9 +36,14 @@ export const AgentsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
+  const [refreshToggle, setRefreshToggle] = useState(false);
   const { isInternetReachable } = useNetwork();
 
   const { auth } = useAuth();
+
+  const refreshAgents = () => {
+    setRefreshToggle((prev) => !prev);
+  };
 
   useEffect(() => {
     if (!auth) {
@@ -183,10 +189,12 @@ export const AgentsProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => {
       es.close();
     };
-  }, [auth, isInternetReachable]);
+  }, [auth, isInternetReachable, refreshToggle]);
 
   return (
-    <AgentsContext.Provider value={{ agents, loading, isConnected }}>
+    <AgentsContext.Provider
+      value={{ agents, loading, isConnected, refreshAgents }}
+    >
       {children}
     </AgentsContext.Provider>
   );

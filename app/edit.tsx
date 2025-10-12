@@ -8,9 +8,11 @@ import Button from "@/components/buttons/AppButton";
 import AppScreen from "@/components/containers/AppScreen";
 import TextInput from "@/components/texts/AppTextInput";
 import config from "@/config";
+import { useAgents } from "@/contexts/AgentsContext";
 
 export default function EditAgentScreen() {
   const { auth } = useAuth();
+  const { refreshAgents } = useAgents();
   const { id, name } = useLocalSearchParams<{ id: string; name: string }>();
   const [agentName, setAgentName] = useState(name || "");
   const [loading, setLoading] = useState(false);
@@ -37,6 +39,7 @@ export default function EditAgentScreen() {
 
       if (res.ok) {
         // Alert.alert("Success", "Agent name updated successfully.");
+        refreshAgents();
         router.replace("/");
         setLoading(false);
       } else {

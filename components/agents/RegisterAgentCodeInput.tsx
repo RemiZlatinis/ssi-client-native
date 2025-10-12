@@ -13,9 +13,11 @@ import Animated, {
 
 import useAuth from "@/auth/useAuth";
 import config from "@/config";
+import { useAgents } from "@/contexts/AgentsContext";
 
 export default function RegisterAgentCodeInput() {
   const { auth } = useAuth();
+  const { refreshAgents } = useAgents();
   const ref = useRef<OTPInputRef>(null);
 
   const handleRegister = async (code: string) => {
@@ -47,6 +49,7 @@ export default function RegisterAgentCodeInput() {
         //   pathname: "/edit",
         //   params: { id: data.id, name: data.name },
         // });
+        refreshAgents();
         router.replace("/");
       } else console.warn(`Unexpected Response:${res}`);
     } catch (error) {
