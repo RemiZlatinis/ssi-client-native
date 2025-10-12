@@ -40,7 +40,7 @@ interface AppTextProps extends TextProps {
 function Text({
   fontWidth = "normal",
   color = "primary",
-  size = 20,
+  size = 18,
   align = "auto",
   ...props
 }: AppTextProps) {
