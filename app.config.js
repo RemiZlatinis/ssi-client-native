@@ -8,25 +8,9 @@ export default {
     scheme: "ssiclientmobile",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
-    splash: {
-      image: "./assets/images/splash-icon.png",
-      resizeMode: "contain",
-      backgroundColor: "#e8f2f7",
-      dark: {
-        backgroundColor: "#091620",
-      },
-    },
     ios: {
       supportsTablet: true,
       userInterfaceStyle: "automatic",
-      splash: {
-        image: "./assets/images/splash-icon.png",
-        resizeMode: "contain",
-        backgroundColor: "#e8f2f7",
-        dark: {
-          backgroundColor: "#091620",
-        },
-      },
     },
     android: {
       adaptiveIcon: {
@@ -38,14 +22,6 @@ export default {
       },
       package: "com.remizlatinis.ssiclientmobile",
       userInterfaceStyle: "automatic",
-      splash: {
-        image: "./assets/images/splash-icon.png",
-        resizeMode: "contain",
-        backgroundColor: "#e8f2f7",
-        dark: {
-          backgroundColor: "#091620",
-        },
-      },
       googleServicesFile:
         process.env.GOOGLE_SERVICES_JSON ?? "./google-services.json",
     },
@@ -68,6 +44,17 @@ export default {
       ],
       "expo-notifications",
       "@react-native-google-signin/google-signin",
+      [
+        "expo-splash-screen",
+        {
+          image: "./assets/images/splash-icon.png",
+          resizeMode: "contain",
+          backgroundColor: "#e8f2f7",
+          dark: {
+            backgroundColor: "#091620",
+          },
+        },
+      ],
     ],
     experiments: {
       typedRoutes: true,
