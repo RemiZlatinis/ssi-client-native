@@ -11,6 +11,7 @@ import {
   Service,
   ServiceSSE,
 } from "@/types";
+import { useNetwork } from "@/hooks";
 
 interface AgentsContextType {
   agents: Agent[];
@@ -34,6 +35,7 @@ export const AgentsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
+  const { isInternetReachable } = useNetwork();
 
   const { auth } = useAuth();
 
@@ -181,7 +183,7 @@ export const AgentsProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => {
       es.close();
     };
-  }, [auth]);
+  }, [auth, isInternetReachable]);
 
   return (
     <AgentsContext.Provider value={{ agents, loading, isConnected }}>
