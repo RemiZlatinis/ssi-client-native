@@ -11,6 +11,7 @@ export default {
     ios: {
       supportsTablet: true,
       userInterfaceStyle: "automatic",
+      bundleIdentifier: "com.remizlatinis.ssiclientmobile",
     },
     android: {
       adaptiveIcon: {
