@@ -23,8 +23,7 @@ export default {
       },
       package: "com.remizlatinis.ssiclientmobile",
       userInterfaceStyle: "automatic",
-      googleServicesFile:
-        process.env.GOOGLE_SERVICES_JSON ?? "./google-services.json",
+      googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
     },
     web: {
       bundler: "metro",
