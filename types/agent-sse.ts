@@ -25,6 +25,7 @@ export interface AgentSSE {
   agent_name: string;
   is_online: boolean;
   ip_address: string | null;
+  last_seen: string | null; // ISO 8601 date string or null
   registration_status: AgentRegistrationStatus;
   services: ServiceSSE[];
 }
@@ -60,6 +61,7 @@ export interface AgentStatusUpdateMessageSSE {
   agent_name: string;
   is_online: boolean;
   ip_address: string | null;
+  last_seen: string | null; // ISO 8601 date string or null
 }
 
 /**

@@ -13,6 +13,8 @@ import { Agent, ServiceStatus } from "@/types";
 import AgentService from "./AgentService";
 import StatusIcon from "./StatusIcon";
 import Text from "../texts/AppText";
+import { HumanizeDate } from "@/utils/date";
+import Colors from "@/constants/Colors";
 
 const AgentIcon = require("@/assets/icons/server.png");
 
@@ -130,9 +132,14 @@ function AgentContainer({ agent }: AgentContainerProps) {
               <Text style={styles.noServicesText}>No services found.</Text>
             )}
           </View>
-          {agent.ip_address && (
-            <Text style={styles.ipAddress}>{agent.ip_address}</Text>
-          )}
+          <View style={styles.agentDetailsContainer}>
+            {agent.ip_address && (
+              <Text style={styles.ipAddress}>{agent.ip_address}</Text>
+            )}
+            <Text style={styles.lastSeenText}>
+              ({HumanizeDate(agent.last_seen || undefined)})
+            </Text>
+          </View>
         </View>
       </Animated.View>
     </View>
@@ -202,13 +209,21 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "center",
   },
-  ipAddress: {
+  agentDetailsContainer: {
+    backgroundColor: "#185e8180",
     padding: 5,
+  },
+  lastSeenText: {
+    fontSize: 12,
+    textAlign: "center",
+    fontFamily: "Poppins-Light",
+    color: Colors.agent.message,
+  },
+  ipAddress: {
     fontSize: 14,
     color: "#ffffffce",
     textAlign: "center",
     fontWeight: "300",
-    backgroundColor: "#185e8180",
   },
   noServicesText: {
     color: "#fff",

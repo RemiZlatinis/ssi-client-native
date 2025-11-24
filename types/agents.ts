@@ -26,6 +26,7 @@ export interface Agent {
   is_online: boolean;
   registration_status?: AgentRegistrationStatus;
   created_at?: string; // ISO 8601 date string
+  last_seen?: Date | null;
   services: Service[];
 }
 

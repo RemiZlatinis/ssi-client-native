@@ -12,6 +12,7 @@ import {
   ServiceSSE,
 } from "@/types";
 import { useNetwork } from "@/hooks";
+import { dateStringToDate } from "@/utils/date";
 
 interface AgentsContextType {
   agents: Agent[];
@@ -104,7 +105,11 @@ export const AgentsProvider: React.FC<{ children: React.ReactNode }> = ({
               }
               return prevAgents.map((agent) =>
                 agent.id === data.agent_id
-                  ? { ...agent, is_online: data.is_online } // Find it and update its dynamical fields
+                  ? {
+                      ...agent,
+                      is_online: data.is_online,
+                      last_seen: dateStringToDate(data.last_seen),
+                    } // Find it and update its dynamical fields
                   : agent,
               );
             });
@@ -117,6 +122,7 @@ export const AgentsProvider: React.FC<{ children: React.ReactNode }> = ({
                 agent.id === data.agent_id // Find the agent of the service
                   ? {
                       ...agent,
+                      last_seen: dateStringToDate(data.timestamp),
                       services: agent.services.map((service) =>
                         service.id === data.service_id // Find the service
                           ? {
@@ -215,6 +221,7 @@ function mapAgents(agents: AgentSSE[]): Agent[] {
     name: agent.agent_name,
     is_online: agent.is_online,
     ip_address: agent.ip_address,
+    last_seen: dateStringToDate(agent.last_seen),
     services: agent.services.map((service) => mapService(service)),
   }));
 }
@@ -237,17 +244,4 @@ function mapService(service: ServiceSSE): Service {
     last_message: service.last_message,
     last_seen: dateStringToDate(service.last_seen),
   };
-}
-
-/**
- * Safely converts ISO date string to Date object
- * Handles null values and invalid date strings gracefully
- *
- * @param dateString - ISO 8601 date string or null
- * @returns Date object or null if invalid/empty
- */
-function dateStringToDate(dateString: string | null): Date | null {
-  if (dateString === null) return null;
-  const date = new Date(dateString);
-  return isNaN(date.getTime()) ? null : date;
 }
