@@ -39,3 +39,4 @@ yarn-error.*
 
 # Google Services
 google-services.json
+submission-key.json
