@@ -2,7 +2,7 @@
  * Represents the possible operating systems for a device.
  * Based on `notifications.models.Device.OS_CHOICES`.
  */
-export type DeviceOS = "Android" | "iOS" | "Unknown";
+export type DeviceOS = "Android" | "iOS" | "iPadOS" | "Windows" | "Unknown";
 
 /**
  * Represents the status of a device.

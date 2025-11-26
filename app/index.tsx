@@ -8,14 +8,14 @@ import { useAgents } from "@/contexts/AgentsContext";
 import AgentContainer from "@/components/agents/AgentContainer";
 import ConnectivityStatus from "@/components/animations/ConnectivityStatus";
 import AppScreen from "@/components/containers/AppScreen";
-import useNotifications from "@/services/useNotifications";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useNetwork } from "@/hooks";
 
 function OverviewScreen() {
   const { auth } = useAuth();
   const { agents, isConnected } = useAgents();
   const { isConnected: isNetworkConnected, isInternetReachable } = useNetwork();
-  useNotifications();
+  usePushNotifications();
 
   return (
     <AppScreen>
