@@ -20,6 +20,9 @@ importers:
       '@expo/vector-icons':
         specifier: ^15.0.3
         version: 15.0.3(expo-font@14.0.9(expo@54.0.25)(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
+      '@lottiefiles/dotlottie-react':
+        specifier: ^0.17.8
+        version: 0.17.8(react@19.1.0)
       '@react-native-google-signin/google-signin':
         specifier: ^16.0.0
         version: 16.0.0(expo@54.0.25)(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
@@ -76,7 +79,7 @@ importers:
         version: 0.5.0(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
       lottie-react-native:
         specifier: ~7.3.4
-        version: 7.3.4(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
+        version: 7.3.4(@lottiefiles/dotlottie-react@0.17.8(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
       react:
         specifier: 19.1.0
         version: 19.1.0
@@ -971,6 +974,14 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@lottiefiles/dotlottie-react@0.17.8':
+    resolution: {integrity: sha512-Hk0bISNURSqL7t+H7S5lW2NQVa1hiibnqRRg6kOWZpswBxfQk+/6WBPc9EfuetdoZmiMoDsmcI0HR4I20oTBRg==}
+    peerDependencies:
+      react: ^17 || ^18 || ^19
+
+  '@lottiefiles/dotlottie-web@0.57.0':
+    resolution: {integrity: sha512-gcgvu9T21YzeY3JjHCZrxftucsxzMH6e9h+8NMv8mbfo1y1M9/jdcsdu40S+pnSLz9/OyiSBQ/EjDsbSOHZy0w==}
 
   '@napi-rs/wasm-runtime@0.2.12':
     resolution: {integrity: sha512-ZVWUcfwY4E/yPitQJl481FjFo3K22D6qF0DuFH6Y/nbnE11GY5uguDxZMGXPQ8WQ0128MXQD7TnfHyK4oWoIJQ==}
@@ -6456,6 +6467,13 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
+  '@lottiefiles/dotlottie-react@0.17.8(react@19.1.0)':
+    dependencies:
+      '@lottiefiles/dotlottie-web': 0.57.0
+      react: 19.1.0
+
+  '@lottiefiles/dotlottie-web@0.57.0': {}
+
   '@napi-rs/wasm-runtime@0.2.12':
     dependencies:
       '@emnapi/core': 1.5.0
@@ -9705,10 +9723,12 @@ snapshots:
     dependencies:
       js-tokens: 4.0.0
 
-  lottie-react-native@7.3.4(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0):
+  lottie-react-native@7.3.4(@lottiefiles/dotlottie-react@0.17.8(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0):
     dependencies:
       react: 19.1.0
       react-native: 0.81.5(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0)
+    optionalDependencies:
+      '@lottiefiles/dotlottie-react': 0.17.8(react@19.1.0)
 
   lru-cache@10.4.3: {}
 
