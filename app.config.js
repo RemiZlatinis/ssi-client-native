@@ -2,6 +2,7 @@ export default {
   expo: {
     name: "ssi-client-mobile",
     slug: "ssi-client-mobile",
+    owner: "remizlatinis",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
