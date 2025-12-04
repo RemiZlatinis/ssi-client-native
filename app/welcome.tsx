@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import { StyleSheet, Text, useColorScheme, View } from "react-native";
+import { StyleSheet, Text, useColorScheme, View, Platform } from "react-native";
 
 import LoginWithGoogleButton from "@/auth/components/LoginWithGoogleButton";
 import useAuth from "@/auth/useAuth";
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   brandContainer: {
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: "auto",
+    marginBottom: Platform.OS === "web" ? 80 : "auto",
     marginTop: 100,
   },
   logoContainer: {

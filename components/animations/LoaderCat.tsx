@@ -1,5 +1,6 @@
 import LottieView from "lottie-react-native";
 import { useRef } from "react";
+import { Platform } from "react-native";
 
 const loaderCat = require("@/assets/lottie/Loader cat.json");
 
@@ -9,7 +10,11 @@ function LoaderCat() {
   return (
     <LottieView
       autoPlay
+      loop
       ref={animation}
+      webStyle={{
+        width: 400,
+      }}
       style={{
         width: 200,
         height: 200,

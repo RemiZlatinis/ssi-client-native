@@ -1,7 +1,14 @@
 import { FontAwesome6 } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
-import { FlatList, StatusBar, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  Platform,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 import useAuth from "@/auth/useAuth";
 import { useAgents } from "@/contexts/AgentsContext";
@@ -26,11 +33,15 @@ function OverviewScreen() {
         </View>
         <Text style={styles.header}>Service Status Indicator</Text>
         <View style={styles.headerItemContainer}>
-          <Link href="/menu">
+          <Link href="/menu" style={styles.linkContainer}>
             {auth?.user?.picture ? (
               <Image style={styles.userPicture} source={auth.user.picture} />
             ) : (
-              <FontAwesome6 name="user-circle" size={32} color="#fff" />
+              <FontAwesome6
+                name="user-circle"
+                size={Platform.OS === "web" ? 40 : 32}
+                color="#fff"
+              />
             )}
           </Link>
         </View>
@@ -58,10 +69,8 @@ function OverviewScreen() {
       )}
 
       {/* Action Button */}
-      <Link href="/add" style={styles.actionButton}>
-        <View style={styles.actionButton}>
-          <FontAwesome6 name="plus" size={24} color="#84C2E1" />
-        </View>
+      <Link href="/add" style={styles.actionButtonLinkContainer}>
+        <FontAwesome6 name="plus" size={24} color="#84C2E1" />
       </Link>
     </AppScreen>
   );
@@ -99,15 +108,15 @@ const styles = StyleSheet.create({
   },
   listContentContainer: {
     padding: 15,
-    paddingBottom: 60,
   },
   headerContainer: {
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
     flexDirection: "row",
     paddingTop: StatusBar.currentHeight,
     backgroundColor: "#185E81",
     alignItems: "center",
     justifyContent: "space-between",
+    height: 50 + (StatusBar.currentHeight || 0),
   },
   headerItemContainer: {
     width: 40,
@@ -120,31 +129,38 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#fff",
     fontFamily: "BrunoAce",
-    paddingVertical: 16,
+  },
+  linkContainer: {
+    // The Link (<a>)  must displayed as flex to occupy space
+    // and apply centering to its children on the web platform
+    display: "flex",
   },
   userPicture: {
     borderColor: "#84C2E1",
     borderRadius: 20,
     borderWidth: 1,
-    height: 32,
-    width: 32,
+    height: Platform.OS === "web" ? 40 : 32,
+    width: Platform.OS === "web" ? 40 : 32,
   },
-  actionButton: {
+  actionButtonLinkContainer: {
+    alignItems: "center",
+    backgroundColor: "#185E81",
+    borderRadius: 30,
+    bottom: Platform.OS === "web" ? 20 : 60,
+    display: "flex", // The Link (<a>)  must displayed as flex to occupy space
+    elevation: 4,
+    height: 60,
+    justifyContent: "center",
     position: "absolute",
-    elevation: 8,
+    right: 20,
     shadowColor: "#000",
     shadowOffset: {
       width: 1,
       height: 2,
     },
-    bottom: 60,
-    right: 20,
+    textAlign: "center", // The plus icon handled as font non-web platforms
+    textAlignVertical: "center", // That's why we use text properties to align the icon
     width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: "#185E81",
-    alignItems: "center",
-    justifyContent: "center",
   },
   screenMessageContainer: {
     flex: 1,

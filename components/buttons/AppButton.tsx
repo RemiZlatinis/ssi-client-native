@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     backgroundColor: "#37A9E1",
     borderRadius: 30,
-    height: 60,
+    height: Platform.OS === "web" ? 40 : 60,
     justifyContent: "center",
     maxWidth: Platform.OS === "web" ? 300 : undefined,
     width: "100%",
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   title: {
     color: "#fff",
     fontFamily: "BrunoAce",
-    fontSize: 24,
+    fontSize: Platform.OS === "web" ? 16 : 24,
     textAlign: "center",
   },
   disabled: {

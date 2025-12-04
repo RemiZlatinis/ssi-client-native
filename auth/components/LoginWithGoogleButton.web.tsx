@@ -84,21 +84,21 @@ function LoginWithGoogleButton() {
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    height: 60,
+    marginHorizontal: "auto",
+    height: 40,
     backgroundColor: "#fff",
     flexDirection: "row",
     alignItems: "center",
-    padding: 15,
-    borderRadius: 30,
+    padding: 5,
+    borderRadius: 25,
     cursor: "pointer", // Add cursor pointer for web
   },
   containerDark: {
     backgroundColor: "#091620",
   },
-  title: { fontWeight: "bold", fontSize: 20, marginLeft: 20 },
+  title: { fontWeight: "bold", fontSize: 16, marginRight: 10, flex: 1 },
   titleDark: { color: "#e8f2f7ee" },
-  icon: { width: 20, height: 20, marginHorizontal: 20 },
+  icon: { width: 20, height: 20, marginHorizontal: 10 },
 });
 
 export default LoginWithGoogleButton;

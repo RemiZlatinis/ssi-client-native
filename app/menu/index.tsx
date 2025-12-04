@@ -4,7 +4,13 @@ import Text from "@/components/texts/AppText";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 const menuItems = [
   { id: "1", title: "Profile", icon: "person-outline", route: null },
@@ -89,7 +95,7 @@ const styles = StyleSheet.create({
   },
 
   logoutButton: {
-    marginBottom: 60,
+    marginBottom: Platform.OS === "web" ? 20 : 60,
     backgroundColor: "#185E81",
   },
   menu: {
