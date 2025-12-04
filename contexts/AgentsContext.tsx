@@ -13,6 +13,7 @@ import {
 } from "@/types";
 import { useNetwork } from "@/hooks";
 import { dateStringToDate } from "@/utils/date";
+import { Platform } from "react-native";
 
 interface AgentsContextType {
   agents: Agent[];
@@ -55,10 +56,18 @@ export const AgentsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     setLoading(true);
-    const es = new EventSource(
-      config.BACKEND.BASE_URL + config.BACKEND.AGENTS_SSE,
-      { headers: { Authorization: `Bearer ${auth.access}` } },
-    );
+    let sseUrl = `${config.BACKEND.BASE_URL}${config.BACKEND.AGENTS_SSE}`;
+
+    // TODO: The following workaround exposes the user Token on the URL. We should
+    // create a unique endpoint for each agent SSE that doesn't require authentication.
+    if (Platform.OS === "web")
+      // On Web, EventSource does not support headers, so we pass the token as a query param.
+      // The backend is configured to check for this param.
+      sseUrl += `?token=${auth.access}`;
+
+    const es = new EventSource(sseUrl, {
+      headers: { Authorization: `Bearer ${auth.access}` },
+    });
 
     es.addEventListener("open", (event) => {
       setIsConnected(true);

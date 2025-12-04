@@ -1,7 +1,7 @@
 import { Image } from "expo-image";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
 
-import LoginWithGoogleButton from "@/auth/components/LoginWithGoogleButton.native";
+import LoginWithGoogleButton from "@/auth/components/LoginWithGoogleButton";
 import useAuth from "@/auth/useAuth";
 import LoaderCat from "@/components/animations/LoaderCat";
 import AppScreen from "@/components/containers/AppScreen";
