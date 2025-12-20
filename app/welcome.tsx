@@ -21,7 +21,9 @@ export default function WelcomeScreen() {
           <Image source={logo} style={styles.logo} />
         </View>
         <Text style={styles.title}>Service Status Indicator</Text>
-        <Text style={styles.subtitle}>Simplified Monitoring Framework</Text>
+        <Text style={styles.subtitle}>
+          Simplified Script-Driven Monitoring System
+        </Text>
       </View>
       {loading ? (
         <View style={styles.loadingContainer}>
