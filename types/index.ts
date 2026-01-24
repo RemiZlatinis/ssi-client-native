@@ -1,4 +1,4 @@
 export * from "./auth";
 export * from "./agents";
 export * from "./services";
-export * from "./agent-sse";
+export * from "./clientEvents";
