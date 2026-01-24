@@ -3,8 +3,11 @@
  * @param date - The date to humanize
  * @returns A human-readable string representing the time elapsed since the date
  */
-export function HumanizeDate(date?: Date): string {
-  if (!date) return "Never";
+export function HumanizeDate(
+  date?: Date | null,
+  fallback: string = "Never",
+): string {
+  if (!date) return fallback;
 
   const now = new Date();
   const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
