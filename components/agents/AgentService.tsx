@@ -4,7 +4,7 @@ import Colors from "@/constants/Colors";
 import { Service } from "@/types";
 import StatusIcon from "./StatusIcon";
 import Text from "../texts/AppText";
-import { HumanizeDate } from "@/utils/date";
+import LiveTimeAgo from "../texts/LiveTimeAgo";
 
 interface AgentServiceProps {
   service: Service;
@@ -21,9 +21,11 @@ function AgentService({ service }: AgentServiceProps) {
           <Text size={14} fontWidth="medium">
             {service.name}
           </Text>
-          <Text style={styles.serviceLastUpdate}>
-            {HumanizeDate(service.last_seen || undefined)}
-          </Text>
+          <LiveTimeAgo
+            date={service.last_seen || undefined}
+            fallback="Never"
+            style={styles.serviceLastUpdate}
+          />
         </View>
         {service.last_message && (
           <Text style={styles.serviceMessage}>{service.last_message}</Text>

@@ -13,8 +13,8 @@ import { Agent, ServiceStatus } from "@/types";
 import AgentService from "./AgentService";
 import StatusIcon from "./StatusIcon";
 import Text from "../texts/AppText";
-import { HumanizeDate } from "@/utils/date";
 import Colors from "@/constants/Colors";
+import LiveTimeAgo from "../texts/LiveTimeAgo";
 
 const AgentIcon = require("@/assets/icons/server.png");
 
@@ -136,9 +136,13 @@ function AgentContainer({ agent }: AgentContainerProps) {
             {agent.ip_address && (
               <Text style={styles.ipAddress}>{agent.ip_address}</Text>
             )}
-            <Text style={styles.lastSeenText}>
-              ({HumanizeDate(agent.last_seen || undefined)})
-            </Text>
+            <LiveTimeAgo
+              date={agent.last_seen}
+              fallback={agent.is_online ? "Now" : "Never"}
+              style={styles.lastSeenText}
+              prefix="("
+              suffix=")"
+            />
           </View>
         </View>
       </Animated.View>
