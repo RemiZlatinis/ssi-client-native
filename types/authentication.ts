@@ -6,9 +6,3 @@ export interface User {
   last_name: string;
   picture: string | null;
 }
-
-export interface AuthObject {
-  access: string;
-  refresh: string;
-  user: User;
-}

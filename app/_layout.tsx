@@ -10,8 +10,7 @@ import { useColorScheme } from "react-native";
 import "react-native-reanimated";
 
 import { AgentsProvider } from "@/contexts/AgentsContext";
-import { AuthProvider } from "@/auth/AuthContext";
-import useAuth from "@/auth/useAuth";
+import { UserProvider, useUser } from "@/contexts/UserContext";
 import { useAppFonts } from "@/hooks/useAppFonts";
 
 export {
@@ -27,62 +26,69 @@ export const unstable_settings = {
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+/**
+ * The entry point of the application.
+ *
+ * This component wraps the RootLayout with the User Context Provider so it can be
+ * accessed throughout the navigation tree where protected routes are set.
+ */
+export default function AppRootLayoutWrapper() {
   return (
-    <AuthProvider>
-      <AgentsProvider>
-        <RootLayoutNav />
-      </AgentsProvider>
-    </AuthProvider>
+    <UserProvider>
+      <RootLayout />
+    </UserProvider>
   );
 }
 
-function RootLayoutNav() {
-  const [fontsLoaded, error] = useAppFonts();
+function RootLayout() {
+  const [fontsLoaded, errorLoadingFonts] = useAppFonts();
+  const { user } = useUser();
   const dark = useColorScheme();
-  const { auth, restoreAuthObject } = useAuth();
-
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
 
   useEffect(() => {
-    restoreAuthObject();
-  }, []);
+    // Expo Router uses Error Boundaries to catch errors in the navigation tree.
+    if (errorLoadingFonts) throw errorLoadingFonts;
+  }, [errorLoadingFonts]);
 
   useEffect(() => {
     if (fontsLoaded) {
+      // Hide the Splash screen when fonts and user are loaded
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
 
   if (!fontsLoaded) return null;
 
-  const isAuthenticated = auth != null;
+  const isLoggedIn = user != null;
+
   return (
     <ThemeProvider value={dark ? DarkTheme : DefaultTheme}>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Protected guard={isAuthenticated}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="menu" />
-          <Stack.Screen
-            name="add"
-            options={{ presentation: "modal", animation: "fade_from_bottom" }}
-          />
-          <Stack.Screen
-            name="edit"
-            options={{ presentation: "modal", animation: "fade_from_bottom" }}
-          />
-          <Stack.Screen
-            name="editDeviceName"
-            options={{ presentation: "fullScreenModal" }}
-          />
-        </Stack.Protected>
-        <Stack.Protected guard={!isAuthenticated}>
-          <Stack.Screen name="welcome" />
-        </Stack.Protected>
-      </Stack>
+      <AgentsProvider>
+        <Stack screenOptions={{ headerShown: false }}>
+          {/* Protected Routes */}
+          <Stack.Protected guard={isLoggedIn}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="menu" />
+            <Stack.Screen
+              name="add"
+              options={{ presentation: "modal", animation: "fade_from_bottom" }}
+            />
+            <Stack.Screen
+              name="edit"
+              options={{ presentation: "modal", animation: "fade_from_bottom" }}
+            />
+            <Stack.Screen
+              name="editDeviceName"
+              options={{ presentation: "fullScreenModal" }}
+            />
+          </Stack.Protected>
+
+          {/* Public Routes */}
+          <Stack.Protected guard={!isLoggedIn}>
+            <Stack.Screen name="welcome" />
+          </Stack.Protected>
+        </Stack>
+      </AgentsProvider>
     </ThemeProvider>
   );
 }

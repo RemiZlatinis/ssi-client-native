@@ -4,24 +4,29 @@ import { Link } from "expo-router";
 import {
   FlatList,
   Platform,
+  Pressable,
   StatusBar,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 
-import useAuth from "@/auth/useAuth";
-import { useAgents } from "@/contexts/AgentsContext";
 import AgentContainer from "@/components/agents/AgentContainer";
-import ConnectivityStatus from "@/components/animations/ConnectivityStatus";
 import AppScreen from "@/components/containers/AppScreen";
-import { usePushNotifications } from "@/hooks/usePushNotifications";
-import { useNetwork } from "@/hooks";
+
+import ConnectivityStatus from "@/components/animations/ConnectivityStatus";
+import {
+  useAgents,
+  useNetworkState,
+  usePushNotifications,
+  useUser,
+} from "@/hooks";
 
 function OverviewScreen() {
-  const { auth } = useAuth();
-  const { agents, isConnected } = useAgents();
-  const { isConnected: isNetworkConnected, isInternetReachable } = useNetwork();
+  const { user } = useUser();
+  const { agents, isConnected, reconnect } = useAgents();
+  const { isConnected: isNetworkConnected, isInternetReachable } =
+    useNetworkState();
   usePushNotifications();
 
   return (
@@ -29,13 +34,15 @@ function OverviewScreen() {
       {/* Header */}
       <View style={styles.headerContainer}>
         <View style={styles.headerItemContainer}>
-          <ConnectivityStatus isConnected={isConnected} />
+          <Pressable onLongPress={reconnect}>
+            <ConnectivityStatus isConnected={isConnected} />
+          </Pressable>
         </View>
         <Text style={styles.header}>Service Status Indicator</Text>
         <View style={styles.headerItemContainer}>
           <Link href="/menu" style={styles.linkContainer}>
-            {auth?.user?.picture ? (
-              <Image style={styles.userPicture} source={auth.user.picture} />
+            {user?.picture ? (
+              <Image style={styles.userPicture} source={user.picture} />
             ) : (
               <FontAwesome6
                 name="user-circle"

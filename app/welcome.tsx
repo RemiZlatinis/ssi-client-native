@@ -1,16 +1,16 @@
 import { Image } from "expo-image";
-import { StyleSheet, Text, useColorScheme, View, Platform } from "react-native";
+import { Platform, StyleSheet, Text, useColorScheme, View } from "react-native";
 
-import LoginWithGoogleButton from "@/auth/components/LoginWithGoogleButton";
-import useAuth from "@/auth/useAuth";
 import LoaderCat from "@/components/animations/LoaderCat";
+import LoginWithGoogleButton from "@/components/buttons/LoginWithGoogleButton";
 import AppScreen from "@/components/containers/AppScreen";
+import { useUser } from "@/contexts/UserContext";
 
 const logo = require("@/assets/images/icon.png");
 
 export default function WelcomeScreen() {
-  const { loading } = useAuth();
   const dark = useColorScheme() === "dark";
+  const { loading } = useUser();
 
   return (
     <AppScreen style={styles.screen}>
