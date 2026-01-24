@@ -10,6 +10,10 @@ import {
 import { dateStringToDate } from "@/utils/date";
 import client from "../lib/client";
 
+const ENDPOINTS = {
+  agents: "agents/",
+};
+
 const URI = {
   agentSSE: `sse/agents/`,
   agentRegistration: `agents/register/complete/`,
@@ -133,7 +137,19 @@ async function registerAgent(
   return response.data;
 }
 
+async function updateAgent(
+  agentId: string,
+  data: { name: string },
+): Promise<void> {
+  const response = await client.patch(`${ENDPOINTS.agents}${agentId}/`, data);
+
+  if (!response.ok) {
+    return console.error("[API] Error updating agent:", response);
+  }
+}
+
 export default {
   agentsSSE,
   registerAgent,
+  updateAgent,
 };

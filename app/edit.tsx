@@ -3,16 +3,13 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Alert, StatusBar, StyleSheet, Text, View } from "react-native";
 
-import useAuth from "@/auth/useAuth";
 import Button from "@/components/buttons/AppButton";
 import AppScreen from "@/components/containers/AppScreen";
 import TextInput from "@/components/texts/AppTextInput";
-import config from "@/config";
-import { useAgents } from "@/contexts/AgentsContext";
+
+import api from "@/api";
 
 export default function EditAgentScreen() {
-  const { auth } = useAuth();
-  const { refreshAgents } = useAgents();
   const { id, name } = useLocalSearchParams<{ id: string; name: string }>();
   const [agentName, setAgentName] = useState(name || "");
   const [loading, setLoading] = useState(false);
@@ -24,36 +21,9 @@ export default function EditAgentScreen() {
     }
 
     setLoading(true);
-    try {
-      const res = await fetch(
-        `${config.BACKEND.BASE_URL + config.BACKEND.AGENTS + id}/`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${auth?.access}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ name: agentName }),
-        },
-      );
-
-      if (res.ok) {
-        // Alert.alert("Success", "Agent name updated successfully.");
-        refreshAgents();
-        router.replace("/");
-        setLoading(false);
-      } else {
-        const errorData = await res.json();
-        Alert.alert(
-          "Update Failed",
-          errorData.detail || `An error occurred: ${res.status}`,
-        );
-      }
-    } catch (error) {
-      console.error("Failed to update agent name:", error);
-      Alert.alert("Error", "An unexpected error occurred. Please try again.");
-      setLoading(false);
-    }
+    await api.agents.updateAgent(id, { name: agentName });
+    setLoading(false);
+    router.replace("/");
   };
 
   return (

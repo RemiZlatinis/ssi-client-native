@@ -14,12 +14,5 @@ const BASE_URL = BACKEND_URL.endsWith("/") ? BACKEND_URL : `${BACKEND_URL}/`;
 
 const API_PREFIX = "api/";
 
-// const BACKEND = {
-//   // Core Endpoints
-//   AGENTS: "api/agents/",
-//   AGENTS_SSE: "api/sse/agents/",
-//   AGENT_REGISTRATION: "api/agents/register/complete/",
-// };
-
 // Export configurations
 export { API_PREFIX, BASE_URL, GOOGLE_WEB_CLIENT_ID };

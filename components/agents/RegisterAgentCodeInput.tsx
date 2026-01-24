@@ -1,8 +1,8 @@
 import { router } from "expo-router";
-import { OTPInputRef, OTPInput, SlotProps } from "input-otp-native";
+import { OTPInput, OTPInputRef, SlotProps } from "input-otp-native";
 
 import { useEffect, useRef } from "react";
-import { Alert, StyleSheet, Text, View, ViewStyle } from "react-native";
+import { StyleSheet, Text, View, ViewStyle } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -11,50 +11,14 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import useAuth from "@/auth/useAuth";
-import config from "@/config";
-import { useAgents } from "@/contexts/AgentsContext";
+import api from "@/api";
 
 export default function RegisterAgentCodeInput() {
-  const { auth } = useAuth();
-  const { refreshAgents } = useAgents();
   const ref = useRef<OTPInputRef>(null);
 
   const handleRegister = async (code: string) => {
-    try {
-      const res = await fetch(
-        `${config.BACKEND.BASE_URL}${config.BACKEND.AGENT_REGISTRATION}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${auth?.access}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ code }),
-        },
-      );
-      if (res.status === 410)
-        Alert.alert(
-          "Registration Error",
-          "Your registration code has expired. Please try again.",
-        );
-      else if (res.status === 400)
-        Alert.alert(
-          "Registration Error",
-          "Invalid registration code. Please try again.",
-        );
-      else if (res.status === 200) {
-        const data = await res.json();
-        // router.replace({
-        //   pathname: "/edit",
-        //   params: { id: data.id, name: data.name },
-        // });
-        refreshAgents();
-        router.replace("/");
-      } else console.warn(`Unexpected Response:${res}`);
-    } catch (error) {
-      console.log(error);
-    }
+    api.agents.registerAgent(code);
+    router.replace("/");
   };
 
   const onComplete = (code: string) => {

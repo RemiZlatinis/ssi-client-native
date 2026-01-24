@@ -1,25 +1,22 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+} from "react";
 import EventSource from "react-native-sse";
-
-import useAuth from "@/auth/useAuth";
-import config from "@/config";
-import {
-  Agent,
-  AgentSSE,
-  KNOWN_AGENT_SSE_TYPES,
-  MessageSSE,
-  Service,
-  ServiceSSE,
-} from "@/types";
-import { useNetwork } from "@/hooks";
-import { dateStringToDate } from "@/utils/date";
-import { Platform } from "react-native";
+import { Agent } from "@/types";
+import api from "@/api";
+import { useUser } from "./UserContext";
+import { AgentsSSEEvent } from "@/api/apis/agents";
 
 interface AgentsContextType {
   agents: Agent[];
   loading: boolean;
   isConnected: boolean;
-  refreshAgents: () => void;
+  reconnect: () => void;
 }
 
 const AgentsContext = createContext<AgentsContextType | undefined>(undefined);
@@ -35,222 +32,160 @@ export const useAgents = (): AgentsContextType => {
 export const AgentsProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const { user } = useUser();
+
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
-  const [refreshToggle, setRefreshToggle] = useState(false);
-  const { isInternetReachable } = useNetwork();
+  const [resetConnectionToggle, setResetConnectionToggle] = useState(false);
 
-  const { auth } = useAuth();
+  const eventSourceRef = useRef<EventSource | null>(null);
 
-  const refreshAgents = () => {
-    setRefreshToggle((prev) => !prev);
+  const reconnect = () => {
+    setResetConnectionToggle((prev) => !prev);
   };
 
+  const handleOpen = () => {
+    setIsConnected(true);
+    setLoading(false);
+  };
+
+  const handleError = (error: any) => {
+    console.error("[AgentsContext] SSE Error:", error);
+    setIsConnected(false);
+    setLoading(false);
+  };
+
+  const handleClose = () => {
+    setIsConnected(false);
+  };
+
+  const handleAgentsSSE = useCallback((event: AgentsSSEEvent) => {
+    switch (event.type) {
+      case "initial_status":
+        setAgents(event.agents);
+        break;
+
+      case "status_update":
+        setAgents((prevAgents) => {
+          const exists = prevAgents.some(
+            (agent) => agent.id === event.agent.id,
+          );
+          if (exists) {
+            return prevAgents.map((agent) =>
+              agent.id === event.agent.id ? event.agent : agent,
+            );
+          }
+          return [...prevAgents, event.agent];
+        });
+        break;
+
+      case "service_added":
+        setAgents((prevAgents) =>
+          prevAgents.map((agent) =>
+            agent.id === event.agent_id
+              ? {
+                  ...agent,
+                  services: [...agent.services, event.service],
+                }
+              : agent,
+          ),
+        );
+        break;
+
+      case "service_removed":
+        setAgents((prevAgents) =>
+          prevAgents.map((agent) =>
+            agent.id === event.agent_id
+              ? {
+                  ...agent,
+                  services: agent.services.filter(
+                    (service) => service.id !== event.service_id,
+                  ),
+                }
+              : agent,
+          ),
+        );
+        break;
+
+      case "service_status_update":
+        setAgents((prevAgents) =>
+          prevAgents.map((agent) =>
+            agent.id === event.agent_id
+              ? {
+                  ...agent,
+                  services: agent.services.map((service) =>
+                    service.id === event.service_id
+                      ? {
+                          ...service,
+                          last_status: event.status,
+                          last_message: event.message,
+                          last_seen: event.timestamp,
+                        }
+                      : service,
+                  ),
+                }
+              : agent,
+          ),
+        );
+        break;
+    }
+  }, []);
+
   useEffect(() => {
-    if (!auth) {
+    if (!user) {
       setAgents([]);
-      setLoading(false);
       setIsConnected(false);
       return;
     }
 
+    let isMounted = true;
     setLoading(true);
-    let sseUrl = `${config.BACKEND.BASE_URL}${config.BACKEND.AGENTS_SSE}`;
 
-    // TODO: The following workaround exposes the user Token on the URL. We should
-    // create a unique endpoint for each agent SSE that doesn't require authentication.
-    if (Platform.OS === "web")
-      // On Web, EventSource does not support headers, so we pass the token as a query param.
-      // The backend is configured to check for this param.
-      sseUrl += `?token=${auth.access}`;
+    const setupConnection = async () => {
+      // Close existing connection if any
+      if (eventSourceRef.current) {
+        console.debug("[AgentsContext] Closing existing SSE connection");
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
 
-    const es = new EventSource(sseUrl, {
-      headers: { Authorization: `Bearer ${auth.access}` },
-    });
-
-    es.addEventListener("open", (event) => {
-      setIsConnected(true);
-    });
-
-    es.addEventListener("message", (event) => {
       try {
-        if (!event.data)
-          return console.warn("SSE message event data is null or empty.");
+        const es = await api.agents.agentsSSE(
+          handleOpen,
+          handleClose,
+          handleError,
+          handleAgentsSSE,
+        );
 
-        const payload: unknown = JSON.parse(event.data);
-
-        if (
-          !payload ||
-          typeof payload !== "object" ||
-          !("type" in payload) ||
-          typeof payload.type !== "string" ||
-          !(KNOWN_AGENT_SSE_TYPES as readonly string[]).includes(payload.type)
-        ) {
-          console.warn("Unknown SSE event:", event.data);
-          return;
-        }
-
-        const data = payload as MessageSSE;
-
-        switch (data.type) {
-          case "initial_status":
-            // data -> array of agents
-            setAgents(mapAgents(data.agents)); // Map the agents objects and initialize the state
-            setLoading(false); // Stop the initial loading
-            break;
-
-          case "agent_status_update":
-            // data -> updated agent
-            // If this is an uninitialized agent
-            setAgents((prevAgents) => {
-              if (!prevAgents.some((agent) => agent.id === data.agent_id)) {
-                console.warn(
-                  `Update for an uninitialized agent ${data.agent_id}-${data.agent_name} received:`,
-                );
-                // Do we add the agent or what? (-.-)
-                // [...prevAgents, data.agent];
-                return prevAgents; // Or ignore it
-              }
-              return prevAgents.map((agent) =>
-                agent.id === data.agent_id
-                  ? {
-                      ...agent,
-                      is_online: data.is_online,
-                      last_seen: dateStringToDate(data.last_seen),
-                    } // Find it and update its dynamical fields
-                  : agent,
-              );
-            });
-            break;
-
-          case "service_status_update":
-            // data -> updated service
-            setAgents((prevAgents) =>
-              prevAgents.map((agent) =>
-                agent.id === data.agent_id // Find the agent of the service
-                  ? {
-                      ...agent,
-                      last_seen: dateStringToDate(data.timestamp),
-                      services: agent.services.map((service) =>
-                        service.id === data.service_id // Find the service
-                          ? {
-                              ...service, // And update its dynamic fields
-                              last_status: data.status,
-                              last_message: data.message,
-                              last_seen: dateStringToDate(data.timestamp),
-                            }
-                          : service,
-                      ),
-                    }
-                  : agent,
-              ),
-            );
-            break;
-
-          case "service_removed":
-            // data -> removed service
-            setAgents((prevAgents) =>
-              prevAgents.map((agent) =>
-                agent.id === data.agent_id // Find the agent of the service
-                  ? {
-                      ...agent,
-                      services: agent.services.filter(
-                        (service) => service.id !== data.service_id, // and remove it
-                      ),
-                    }
-                  : agent,
-              ),
-            );
-            break;
-
-          case "service_added":
-            // data -> added service
-            const mappedService = mapService(data);
-            setAgents((prevAgents) =>
-              prevAgents.map((agent) =>
-                agent.id === data.agent_id // Find the agent of the service
-                  ? {
-                      ...agent,
-                      services: [...agent.services, mappedService], // and add it
-                    }
-                  : agent,
-              ),
-            );
-            break;
-
-          default:
-            console.warn("Unknown SSE event type:", data);
+        if (isMounted) {
+          eventSourceRef.current = es;
+        } else {
+          es.close();
         }
       } catch (error) {
-        console.error("Error parsing SSE message:", error, event.data);
-        setLoading(false);
+        if (isMounted) {
+          console.error("[AgentsContext] Failed to setup SSE:", error);
+          setLoading(false);
+        }
       }
-    });
+    };
 
-    es.addEventListener("error", (error) => {
-      if ("message" in error && error.message === "Connection reset")
-        console.log("SSE Error:", error);
-      else console.error("SSE Error:", error);
-      setLoading(false);
-      setIsConnected(false);
-    });
-
-    es.addEventListener("close", (event) => {
-      setLoading(false);
-      setIsConnected(false);
-    });
+    setupConnection();
 
     return () => {
-      es.close();
+      isMounted = false;
+      if (eventSourceRef.current) {
+        console.debug("[AgentsContext] Cleaning up SSE connection");
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
     };
-  }, [auth, isInternetReachable, refreshToggle]);
+  }, [user, resetConnectionToggle, handleAgentsSSE]);
 
   return (
-    <AgentsContext.Provider
-      value={{ agents, loading, isConnected, refreshAgents }}
-    >
+    <AgentsContext.Provider value={{ agents, loading, isConnected, reconnect }}>
       {children}
     </AgentsContext.Provider>
   );
 };
-
-// ==================== UTILITY FUNCTIONS ====================
-
-/**
- * Maps raw AgentSSE data from the server to Agent objects for the frontend
- * Transforms server field names to frontend field names and processes nested services
- *
- * @param agents - Array of raw agent data from SSE
- * @returns Array of processed Agent objects for frontend use
- */
-function mapAgents(agents: AgentSSE[]): Agent[] {
-  return agents.map((agent) => ({
-    id: agent.agent_id,
-    name: agent.agent_name,
-    is_online: agent.is_online,
-    ip_address: agent.ip_address,
-    last_seen: dateStringToDate(agent.last_seen),
-    services: agent.services.map((service) => mapService(service)),
-  }));
-}
-
-/**
- * Maps raw ServiceSSE data from the server to Service objects for the frontend
- * Transforms server field names to frontend field names and processes dates
- *
- * @param service - Raw service data from SSE
- * @returns Processed Service object for frontend use
- */
-function mapService(service: ServiceSSE): Service {
-  return {
-    id: service.service_id,
-    name: service.name,
-    description: service.description,
-    version: service.version,
-    schedule: service.schedule,
-    last_status: service.last_status,
-    last_message: service.last_message,
-    last_seen: dateStringToDate(service.last_seen),
-  };
-}

@@ -1,3 +1,5 @@
-import * as Network from "expo-network";
+// Libraries
+export { useNetworkState } from "expo-network";
 
-export const useNetwork = () => Network.useNetworkState();
+// Contexts
+export { useAgents } from "@/contexts/AgentsContext";
