@@ -1,27 +1,25 @@
+// Load environment variables
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+const GOOGLE_WEB_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
 
-if (!BACKEND_URL) throw Error("EXPO_PUBLIC_BACKEND_URL is not defined!");
+// Throw an error on missing a required environment variable
+if (!BACKEND_URL) throw Error("EXPO_PUBLIC_BACKEND_URL is required!");
+if (!GOOGLE_WEB_CLIENT_ID)
+  throw Error("EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID is required!");
 
-const BACKEND = {
-  BASE_URL: BACKEND_URL,
-  LOGIN: "api/auth/login/",
-  GOOGLE_LOGIN: "api/auth/google/",
-  AGENTS: "api/agents/",
-  AGENTS_SSE: "api/sse/agents/",
-  AGENT_REGISTRATION: "api/agents/register/complete/",
-  NOTIFICATIONS_DEVICES: "api/notifications/devices/",
-};
+/**
+ * Normalized BACKEND_URL always end with '/'
+ */
+const BASE_URL = BACKEND_URL.endsWith("/") ? BACKEND_URL : `${BACKEND_URL}/`;
 
-const GOOGLE = {
-  WEB_CLIENT_ID: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-};
+const API_PREFIX = "api/";
 
-if (!GOOGLE.WEB_CLIENT_ID)
-  throw Error(
-    "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID is not defined or google-services.json is missing!",
-  );
+// const BACKEND = {
+//   // Core Endpoints
+//   AGENTS: "api/agents/",
+//   AGENTS_SSE: "api/sse/agents/",
+//   AGENT_REGISTRATION: "api/agents/register/complete/",
+// };
 
-export default {
-  BACKEND,
-  GOOGLE,
-};
+// Export configurations
+export { API_PREFIX, BASE_URL, GOOGLE_WEB_CLIENT_ID };
