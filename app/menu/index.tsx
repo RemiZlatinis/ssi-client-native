@@ -1,6 +1,3 @@
-import useAuth from "@/auth/useAuth";
-import Button from "@/components/buttons/AppButton";
-import Text from "@/components/texts/AppText";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -11,6 +8,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+import Button from "@/components/buttons/AppButton";
+import Text from "@/components/texts/AppText";
+import { useUser } from "@/hooks";
+import api from "@/api";
 
 const menuItems = [
   { id: "1", title: "Profile", icon: "person-outline", route: null },
@@ -36,14 +38,19 @@ const menuItems = [
 ];
 
 export default function MenuScreen() {
-  const { auth, logout } = useAuth();
+  const { user, setUser } = useUser();
+
+  const handleLogout = () => {
+    api.authentication.deauthenticate();
+    setUser(null);
+  };
 
   return (
     <>
       <View style={styles.userContainer}>
-        <Image style={styles.userPicture} source={auth?.user?.picture} />
+        <Image style={styles.userPicture} source={user?.picture} />
         <Text size={24} fontWidth="medium">
-          {auth?.user?.first_name} {auth?.user?.last_name}
+          {user?.first_name} {user?.last_name}
         </Text>
       </View>
 
@@ -66,7 +73,11 @@ export default function MenuScreen() {
         )}
       />
 
-      <Button title="Logout" onPress={logout} style={styles.logoutButton} />
+      <Button
+        title="Logout"
+        onPress={handleLogout}
+        style={styles.logoutButton}
+      />
     </>
   );
 }
