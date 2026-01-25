@@ -2,14 +2,13 @@ import React from "react";
 import { useLocalSearchParams, router } from "expo-router";
 import { Alert } from "react-native";
 
-import { Device } from "@/types/notifications";
-import config from "@/config";
-import { useAuthContext } from "@/auth/AuthContext";
+import api from "@/api";
 import EditTextFieldScreen from "@/components/containers/EditTextFieldScreen";
+
+import { Device } from "@/types";
 
 function EditDeviceName() {
   const { device: deviceString } = useLocalSearchParams();
-  const { auth } = useAuthContext();
 
   if (
     !deviceString ||
@@ -31,26 +30,18 @@ function EditDeviceName() {
   }
 
   const handleSave = async (newName: string) => {
-    if (!auth) return;
-
     try {
-      const response = await fetch(
-        `${config.BACKEND.BASE_URL}${config.BACKEND.NOTIFICATIONS_DEVICES}${device.id}/`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${auth.access}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ device_name: newName }),
-        },
-      );
-      if (response.ok) {
+      const updatedDevice = await api.notifications.updateDevice(device.id, {
+        device_name: newName,
+      });
+
+      if (updatedDevice) {
         router.back();
       } else {
         Alert.alert("Error", "Failed to update device name");
       }
-    } catch {
+    } catch (error) {
+      console.error("Error updating device name:", error);
       Alert.alert("Error", "Network error");
     }
   };

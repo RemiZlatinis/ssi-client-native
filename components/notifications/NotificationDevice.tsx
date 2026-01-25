@@ -2,12 +2,11 @@ import { router } from "expo-router";
 import React, { useState } from "react";
 import { Alert, Pressable, StyleSheet, Switch, View } from "react-native";
 
-import { useAuthContext } from "@/auth/AuthContext";
+import api from "@/api";
 import AppButton from "@/components/buttons/AppButton";
 import AppContainer from "@/components/containers/AppContainer";
 import AppText from "@/components/texts/AppText";
-import config from "@/config";
-import { Device } from "@/types/notifications";
+import { Device } from "@/types";
 
 function NotificationDevice({
   device,
@@ -16,61 +15,45 @@ function NotificationDevice({
   device: Device;
   onIsActiveToggle: () => void;
 }) {
-  const { auth } = useAuthContext();
   const [updating, setUpdating] = useState(false);
   const [testing, setTesting] = useState(false);
 
   const toggleStatus = async () => {
-    if (!auth) return;
     setUpdating(true);
 
     onIsActiveToggle();
     try {
-      const response = await fetch(
-        `${config.BACKEND.BASE_URL}${config.BACKEND.NOTIFICATIONS_DEVICES}${device.id}/`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${auth.access}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            status: device.status === "active" ? "inactive" : "active",
-          }),
-        },
-      );
+      const updatedDevice = await api.notifications.updateDevice(device.id, {
+        status: device.status === "active" ? "inactive" : "active",
+      });
 
-      if (!response.ok) {
+      if (!updatedDevice) {
         onIsActiveToggle();
         Alert.alert("Error", "Failed to update device status");
       }
-      setUpdating(false);
-    } catch {
+    } catch (error) {
+      console.error("Error updating device status:", error);
       onIsActiveToggle();
       Alert.alert("Error", "Network error");
+    } finally {
       setUpdating(false);
     }
   };
 
   const sendTestNotification = async () => {
-    if (!auth) return;
     setTesting(true);
     try {
-      const response = await fetch(
-        `${config.BACKEND.BASE_URL}${config.BACKEND.NOTIFICATIONS_DEVICES}${device.id}/test/`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${auth.access}`,
-          },
-        },
-      );
+      const success = await api.notifications.sendTestNotification(device.id);
 
-      if (response.ok) console.debug("Success: Test notification sent!");
-      else Alert.alert("Error", "Failed to send test notification");
-      setTesting(false);
-    } catch {
+      if (success) {
+        console.debug("Success: Test notification sent!");
+      } else {
+        Alert.alert("Error", "Failed to send test notification");
+      }
+    } catch (error) {
+      console.error("Error sending test notification:", error);
       Alert.alert("Error", "Network error");
+    } finally {
       setTesting(false);
     }
   };

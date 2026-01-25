@@ -11,8 +11,8 @@ export type DeviceOS = "Android" | "iOS" | "iPadOS" | "Windows" | "Unknown";
 export type DeviceStatus = "active" | "inactive";
 
 /**
- * Interface for the data required to create a new device.
- * Corresponds to `DeviceCreateSerializer`.
+ * Interface for the data required to register a new device for notifications.
+ * Corresponds to `DeviceCreateSerializer` on notifications app.
  */
 export interface DeviceCreate {
   token: string;

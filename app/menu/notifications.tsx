@@ -1,40 +1,35 @@
 import { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-import { Device } from "@/types/notifications";
-import config from "@/config";
-import useAuth from "@/auth/useAuth";
+import api from "@/api";
+import { Device } from "@/types";
 import NotificationDevice from "@/components/notifications/NotificationDevice";
 import LoaderCat from "@/components/animations/LoaderCat";
 
 function NotificationsSettingsScreen() {
   const [loading, setLoading] = useState(true);
   const [devices, setDevices] = useState<Device[]>([]);
-  const { auth } = useAuth();
+  const [error, setError] = useState<string | null>(null);
 
   const fetchDevices = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `${config.BACKEND.BASE_URL + config.BACKEND.NOTIFICATIONS_DEVICES}`,
-        {
-          method: "GET",
-          headers: {
-            ...(auth?.access && { Authorization: `Bearer ${auth?.access}` }),
-          },
-        },
-      );
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      setError(null);
+      const data = await api.notifications.getDevices();
+      if (data === null) {
+        setError("Failed to load notification devices");
+        setDevices([]);
+      } else {
+        setDevices(data);
       }
-      const data = await response.json();
-      setDevices(data);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching devices:", error);
+    } catch (err) {
+      console.error("Error fetching devices:", err);
+      setError("An unexpected error occurred");
+      setDevices([]);
+    } finally {
       setLoading(false);
     }
-  }, [auth?.access]);
+  }, []);
 
   useEffect(() => {
     fetchDevices();
@@ -62,6 +57,14 @@ function NotificationsSettingsScreen() {
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
           <LoaderCat />
+        </View>
+      ) : error ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      ) : devices.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No devices registered yet</Text>
         </View>
       ) : (
         devices.map((device) => (
@@ -91,6 +94,30 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#185E81",
     fontFamily: "Poppins-Medium",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 16,
+  },
+  errorText: {
+    fontSize: 16,
+    color: "#D32F2F",
+    fontFamily: "Poppins-Regular",
+    textAlign: "center",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 16,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: "#666",
+    fontFamily: "Poppins-Regular",
+    textAlign: "center",
   },
 });
 

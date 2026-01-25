@@ -1,21 +1,21 @@
-import { registerDeviceToken } from "@/api/devices";
-import useAuth from "@/auth/useAuth";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import { useEffect, useRef, useState } from "react";
+
+import api from "@/api";
+
 import {
   getPushTokenAsync,
   registerAndroidChannels,
   setupNotificationHandler,
 } from "@/services/notifications";
-import { DeviceOS } from "@/types/notifications";
-import * as Device from "expo-device";
-import * as Notifications from "expo-notifications";
-import { useEffect, useRef, useState } from "react";
+
+import { DeviceOS } from "@/types";
 
 // Initialize config immediately (can be done in App.tsx too)
 setupNotificationHandler();
 
-export function usePushNotifications() {
-  const { auth } = useAuth();
-
+function usePushNotifications() {
   // State for listeners (optional, if you need to display payload in UI)
   const [notification, setNotification] = useState<
     Notifications.Notification | undefined
@@ -38,7 +38,7 @@ export function usePushNotifications() {
       const token = await getPushTokenAsync();
 
       // 3. Send to Backend (only if we have a token and a user)
-      if (token && auth?.access && isMounted) {
+      if (token && isMounted) {
         const deviceData = {
           token,
           manufacturer: Device.manufacturer ?? "Unknown",
@@ -48,7 +48,7 @@ export function usePushNotifications() {
           os_version: Device.osVersion ?? "",
         };
 
-        await registerDeviceToken(deviceData, auth.access);
+        await api.notifications.registerDevice(deviceData);
       }
     };
 
@@ -75,7 +75,9 @@ export function usePushNotifications() {
         responseListener.current.remove();
       }
     };
-  }, [auth?.access]);
+  }, []);
 
   return { notification };
 }
+
+export default usePushNotifications;
