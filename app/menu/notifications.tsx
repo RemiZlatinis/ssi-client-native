@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from "react-native";
 import api from "@/api";
 import { Device } from "@/types";
 import NotificationDevice from "@/components/notifications/NotificationDevice";
-import LoaderCat from "@/components/animations/LoaderCat";
+import LoaderCat from "@/components/animated/LoaderCat";
 
 function NotificationsSettingsScreen() {
   const [loading, setLoading] = useState(true);

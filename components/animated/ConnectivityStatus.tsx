@@ -14,6 +14,7 @@ function ConnectivityStatus({ isConnected }: ConnectivityStatusProps) {
   return (
     <LottieView
       autoPlay
+      loop
       ref={animation}
       style={{
         width: 50,

@@ -14,7 +14,7 @@ import {
 import AgentContainer from "@/components/agents/AgentContainer";
 import AppScreen from "@/components/containers/AppScreen";
 
-import ConnectivityStatus from "@/components/animations/ConnectivityStatus";
+import ConnectivityStatus from "@/components/animated/ConnectivityStatus";
 import {
   useAgents,
   useNetworkState,
