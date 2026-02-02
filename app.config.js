@@ -1,12 +1,12 @@
 export default {
   expo: {
-    name: "ssi-client-mobile",
-    slug: "ssi-client-mobile",
+    name: "Service Status Indicator",
+    slug: "ssi-client-native",
     owner: "remizlatinis",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
-    scheme: "ssiclientmobile",
+    scheme: "ssiclientnative",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     ios: {
