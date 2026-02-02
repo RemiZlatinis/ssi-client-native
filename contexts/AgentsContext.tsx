@@ -6,6 +6,7 @@ import React, {
   useRef,
   useCallback,
 } from "react";
+import { AppState, AppStateStatus } from "react-native";
 import EventSource from "react-native-sse";
 import { Agent } from "@/types";
 import api from "@/api";
@@ -38,6 +39,9 @@ export const AgentsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [resetConnectionToggle, setResetConnectionToggle] = useState(false);
+  const [appState, setAppState] = useState<AppStateStatus>(
+    AppState.currentState,
+  );
 
   const eventSourceRef = useRef<EventSource | null>(null);
 
@@ -133,9 +137,30 @@ export const AgentsProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   useEffect(() => {
-    if (!user) {
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      console.debug("[AgentsContext] AppState changed to:", nextAppState);
+      setAppState(nextAppState);
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!user || appState !== "active") {
+      if (appState !== "active" && eventSourceRef.current) {
+        console.debug(
+          "[AgentsContext] App is in background, closing SSE connection",
+        );
+      }
       setAgents([]);
       setIsConnected(false);
+
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
       return;
     }
 
@@ -181,7 +206,7 @@ export const AgentsProvider: React.FC<{ children: React.ReactNode }> = ({
         eventSourceRef.current = null;
       }
     };
-  }, [user, resetConnectionToggle, handleAgentsSSE]);
+  }, [user, appState, resetConnectionToggle, handleAgentsSSE]);
 
   return (
     <AgentsContext.Provider value={{ agents, loading, isConnected, reconnect }}>
