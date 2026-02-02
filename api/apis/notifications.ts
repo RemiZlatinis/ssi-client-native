@@ -41,7 +41,7 @@ async function updateDevice(
 }
 
 async function sendTestNotification(id: number): Promise<boolean> {
-  const response = await client.get(ENDPOINTS.test(id));
+  const response = await client.post(ENDPOINTS.test(id));
 
   if (!response.ok) {
     console.error("Failed to send test notification", response);
