@@ -40,8 +40,8 @@ const menuItems = [
 export default function MenuScreen() {
   const { user, setUser } = useUser();
 
-  const handleLogout = () => {
-    api.authentication.deauthenticate();
+  const handleLogout = async () => {
+    await api.authentication.deauthenticate();
     setUser(null);
   };
 
