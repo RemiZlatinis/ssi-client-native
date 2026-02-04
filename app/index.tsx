@@ -33,11 +33,11 @@ function OverviewScreen() {
     <AppScreen>
       {/* Header */}
       <View style={styles.headerContainer}>
-        <View style={styles.headerItemContainer}>
-          <Pressable onLongPress={reconnect}>
+        <Pressable onLongPress={reconnect}>
+          <View style={styles.headerItemContainer}>
             <ConnectivityStatus isConnected={isConnected} />
-          </Pressable>
-        </View>
+          </View>
+        </Pressable>
         <Text style={styles.header}>Service Status Indicator</Text>
         <View style={styles.headerItemContainer}>
           <Link href="/menu" style={styles.linkContainer}>
