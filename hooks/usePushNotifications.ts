@@ -11,6 +11,7 @@ import {
 } from "@/services/notifications";
 
 import { DeviceOS } from "@/types";
+import { Platform } from "react-native";
 
 // Initialize config immediately (can be done in App.tsx too)
 setupNotificationHandler();
@@ -28,6 +29,8 @@ function usePushNotifications() {
   const responseListener = useRef<Notifications.EventSubscription | null>(null);
 
   useEffect(() => {
+    if (Platform.OS === "web") return;
+
     let isMounted = true;
 
     const register = async () => {
