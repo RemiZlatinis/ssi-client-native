@@ -11,22 +11,86 @@ export interface SSEConnectionOptions {
   onMessage: (data: string) => void;
 }
 
+// Define the shape of a native EventSource for web platform
+type WebEventSource = {
+  addEventListener: (
+    type: string,
+    listener: (event: { data?: string }) => void,
+  ) => void;
+  removeEventListener: (
+    type: string,
+    listener: (event: { data?: string }) => void,
+  ) => void;
+  close: () => void;
+  onopen?: () => void;
+  onerror?: (error: unknown) => void;
+  onmessage?: (event: { data?: string }) => void;
+};
+
 /**
  * Creates an EventSource connection with event handlers attached BEFORE connection opens.
  * This ensures we don't miss the 'open' event.
+ *
+ * WEB PLATFORM:
+ *   - Uses native browser EventSource API
+ *   - Sends cookies automatically with withCredentials: true
+ *   - No manual header management needed (session cookie handles auth)
+ *
+ * NATIVE PLATFORM:
+ *   - Uses react-native-sse library
+ *   - Manually sends X-Session-Token header
  */
 export const createSSEConnection = async (
   endpoint: string,
   options: SSEConnectionOptions,
-): Promise<EventSource> => {
+): Promise<EventSource | WebEventSource> => {
   const URI = BASE_URL + API_PREFIX + endpoint;
 
-  let es: EventSource;
+  let es: EventSource | WebEventSource;
 
   if (Platform.OS === "web") {
-    // WEB: Native Browser API + Cookies
-    // es = new EventSource(URI, { withCredentials: true });
-    throw new Error("SSE connection on Web is not implemented yet.");
+    // WEB: Native Browser API with cookies
+    // Note: We cast window.EventSource to any because TypeScript doesn't know about it
+    // in a React Native context, but it exists when running on web platform
+    const WebES = (window as unknown as { EventSource: typeof EventSource })
+      .EventSource;
+
+    if (!WebES) {
+      throw new Error("Native EventSource not available in this browser");
+    }
+
+    // Create native EventSource with credentials (cookies)
+    // This automatically sends session cookies for authentication
+    es = new WebES(URI, { withCredentials: true }) as WebEventSource;
+
+    // Attach listeners for web EventSource
+    const openHandler = () => {
+      console.debug("SSE connection opened (web)");
+      options.onOpen();
+    };
+
+    const errorHandler = (event: unknown) => {
+      console.debug("SSE connection error (web):", event);
+      options.onError(event);
+    };
+
+    const messageHandler = (event: { data?: string }) => {
+      console.debug("SSE connection received message (web):", event.data);
+      if (event.data) {
+        options.onMessage(event.data);
+      }
+    };
+
+    const closeHandler = () => {
+      console.debug("SSE connection closed (web)");
+      options.onClose();
+    };
+
+    // Native EventSource uses on* properties and addEventListener
+    es.onopen = openHandler;
+    es.onerror = errorHandler;
+    es.onmessage = messageHandler;
+    es.addEventListener("close", closeHandler);
   } else {
     // NATIVE: React Native SSE + X-Session-Token
     const session_token = await secureStorage.get("X-Session-Token");
@@ -42,34 +106,30 @@ export const createSSEConnection = async (
         "X-Session-Token": session_token,
       },
     });
+
+    // Attach listeners for react-native-sse
+    es.addEventListener("open", () => {
+      console.debug("SSE connection opened (native)");
+      options.onOpen();
+    });
+
+    es.addEventListener("close", () => {
+      console.debug("SSE connection closed (native)");
+      options.onClose();
+    });
+
+    es.addEventListener("error", (event) => {
+      console.debug("SSE connection error (native):", event);
+      options.onError(event);
+    });
+
+    es.addEventListener("message", (event) => {
+      console.debug("SSE connection received message (native):", event.data);
+      if (event.data) {
+        options.onMessage(event.data);
+      }
+    });
   }
-
-  // Attach listeners immediately after construction
-  es.addEventListener("open", () => {
-    console.debug("SSE connection opened");
-
-    options.onOpen();
-  });
-
-  es.addEventListener("close", () => {
-    console.debug("SSE connection closed");
-
-    options.onClose();
-  });
-
-  es.addEventListener("error", (event) => {
-    console.debug("SSE connection error");
-
-    options.onError(event);
-  });
-
-  es.addEventListener("message", (event) => {
-    console.debug("SSE connection received message:", event.data);
-
-    if (event.data) {
-      options.onMessage(event.data);
-    }
-  });
 
   return es;
 };
