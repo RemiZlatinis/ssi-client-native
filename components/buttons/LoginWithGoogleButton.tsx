@@ -10,10 +10,8 @@ function LoginWithGoogleButton() {
 
   const login = async () => {
     setLoading(true);
-
     const user = await api.authentication.loginWithGoogle();
-    setUser(user);
-
+    if (user) setUser(user);
     setLoading(false);
   };
 
