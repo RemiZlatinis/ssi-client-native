@@ -86,6 +86,7 @@ function RootLayout() {
           {/* Public Routes */}
           <Stack.Protected guard={!isLoggedIn}>
             <Stack.Screen name="welcome" />
+            <Stack.Screen name="auth/callback" />
           </Stack.Protected>
         </Stack>
       </AgentsProvider>
