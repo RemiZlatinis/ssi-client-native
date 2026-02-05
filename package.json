@@ -1,7 +1,7 @@
 {
   "name": "ssi-client-native",
   "main": "expo-router/entry",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.1",
   "description": "The native client of the Service Status Indicator monitoring system",
   "author": "Remi Zlatinis",
   "license": "MIT",
