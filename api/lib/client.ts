@@ -12,18 +12,26 @@ const client = create({
   xsrfHeaderName: "X-CSRFToken",
 });
 
-// Add a request transform to manually inject the CSRF token
-// This is more robust than relying on axios defaults, especially for cross-origin localhost requests
-client.addRequestTransform((request) => {
+// Add a request interceptor to manually inject the CSRF token
+// We use axiosInstance.interceptors.request because it supports async operations
+client.axiosInstance.interceptors.request.use(async (config) => {
   if (Platform.OS === "web" && typeof document !== "undefined") {
-    const token = getCSRFfromCookies(document);
+    // Only fetch for mutating requests to avoid unnecessary overhead on GETs
+    const isMutation = ["post", "put", "delete", "patch"].includes(
+      config.method?.toLowerCase() || "",
+    );
+
+    let token: string | null = null;
+
+    if (isMutation) {
+      token = await getCSRFfromCookies();
+    }
+
     if (token) {
-      if (!request.headers) {
-        request.headers = {};
-      }
-      request.headers["X-CSRFToken"] = token;
+      config.headers["X-CSRFToken"] = token;
     }
   }
+  return config;
 });
 
 export default client;
