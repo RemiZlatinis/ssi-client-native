@@ -157,9 +157,11 @@ async function deauthenticate() {
 async function loginWithGoogle(): Promise<User | null | void> {
   // Web: Redirect Flow
   if (Platform.OS === "web") {
-    const csrfToken = getCSRFfromCookies(document);
+    const csrfToken = await getCSRFfromCookies();
     if (!csrfToken) {
-      console.error("CSRF token not found in cookies.");
+      console.error(
+        "CSRF token not found in cookies even after fetch attempt.",
+      );
       return null;
     }
 
