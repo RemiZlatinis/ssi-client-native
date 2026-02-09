@@ -154,7 +154,7 @@ These technologies and patterns **must not be replaced** without explicit archit
 | Language        | TypeScript              |
 | Navigation      | Expo Router             |
 | Secure Storage  | `expo-secure-store`     |
-| Package Manager | pnpm                    |
+| Package Manager | bun                     |
 
 ---
 

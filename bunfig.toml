@@ -1,0 +1,2 @@
+[install]
+override = { "expo-dev-menu" = "7.0.10" }

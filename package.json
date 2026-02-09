@@ -80,9 +80,5 @@
     "typescript": "~5.9.2"
   },
   "private": true,
-  "pnpm": {
-    "overrides": {
-      "expo-dev-menu": "7.0.10"
-    }
-  }
+  "packageManager": "bun@1.2.0"
 }
