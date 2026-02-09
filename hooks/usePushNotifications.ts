@@ -42,12 +42,18 @@ function usePushNotifications() {
 
       // 3. Send to Backend (only if we have a token and a user)
       if (token && isMounted) {
+        const getDeviceOS = (): DeviceOS => {
+          if (Platform.OS === "android") return "Android";
+          if (Platform.OS === "ios") return "iOS";
+          return "Unknown";
+        };
+
         const deviceData = {
           token,
           manufacturer: Device.manufacturer ?? "Unknown",
           model_name: Device.modelName ?? "Unknown",
           device_name: Device.deviceName ?? "Unknown",
-          os_name: (Device.osName as DeviceOS) ?? "Unknown",
+          os_name: getDeviceOS(),
           os_version: Device.osVersion ?? "",
         };
 
