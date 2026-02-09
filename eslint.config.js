@@ -1,22 +1,15 @@
-const { defineConfig } = require("eslint/config");
+const { defineConfig, globalIgnores } = require("eslint/config");
 const expoConfig = require("eslint-config-expo/flat");
 const eslintPluginPrettierRecommended = require("eslint-plugin-prettier/recommended");
-const typescriptEslint = require("@typescript-eslint/eslint-plugin");
 
 module.exports = defineConfig([
+  globalIgnores(["dist/**", ".expo/**", "node_modules/**"]),
   expoConfig,
   eslintPluginPrettierRecommended,
   {
-    ignores: ["dist/*", ".expo/*", "node_modules/*"],
-    plugins: {
-      "@typescript-eslint": typescriptEslint,
-    },
-    languageOptions: {
-      parser: require("@typescript-eslint/parser"),
-    },
+    files: ["**/*.{js,jsx,ts,tsx}"],
     rules: {
-      "react/no-unescaped-entities": "off", // Allow (') and (") in JSX
-      "@typescript-eslint/no-unused-vars": "warn",
+      "react/no-unescaped-entities": "off",
     },
   },
 ]);
