@@ -1,6 +1,5 @@
 import LottieView from "lottie-react-native";
 import { useRef } from "react";
-import { Platform } from "react-native";
 
 const loaderCat = require("@/assets/lottie/Loader cat.json");
 

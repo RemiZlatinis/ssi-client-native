@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import Text from "./AppText";
 import { usePeriodicRerender } from "@/hooks";
 import { HumanizeDate } from "@/utils/date";
