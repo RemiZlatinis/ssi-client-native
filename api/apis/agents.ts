@@ -38,6 +38,7 @@ const mapToAgent = (data: ClientAgentData): Agent => ({
   ip_address: data.ip_address,
   last_seen: data.last_seen ? dateStringToDate(data.last_seen) : null,
   registration_status: data.registration_status,
+  grace_period: data.grace_period,
   services: data.services.map((s) => mapToService(s)),
 });
 
@@ -139,7 +140,7 @@ async function registerAgent(
 
 async function updateAgent(
   agentId: string,
-  data: { name: string },
+  data: { name?: string; grace_period?: number },
 ): Promise<void> {
   const response = await client.patch(`${ENDPOINTS.agents}${agentId}/`, data);
 
@@ -148,8 +149,29 @@ async function updateAgent(
   }
 }
 
+/**
+ * Fetches a single agent by ID from the backend.
+ */
+async function getAgent(agentId: string): Promise<Agent | null> {
+  const response = await client.get<ClientAgentData>(
+    `${ENDPOINTS.agents}${agentId}/`,
+  );
+
+  if (!response.ok) {
+    console.error("[API] Error fetching agent:", response);
+    return null;
+  }
+
+  if (!response.data) {
+    return null;
+  }
+
+  return mapToAgent(response.data);
+}
+
 export default {
   agentsSSE,
   registerAgent,
   updateAgent,
+  getAgent,
 };

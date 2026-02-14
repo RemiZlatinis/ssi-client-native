@@ -22,6 +22,7 @@ export interface ClientAgentData {
   ip_address: string | null;
   is_online: boolean;
   last_seen: string | null;
+  grace_period: number;
 }
 
 // --- Payloads ---

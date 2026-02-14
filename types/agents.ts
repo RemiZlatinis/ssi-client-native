@@ -27,6 +27,7 @@ export interface Agent {
   registration_status?: AgentRegistrationStatus;
   created_at?: string; // ISO 8601 date string
   last_seen?: Date | null;
+  grace_period: number;
   services: Service[];
 }
 
