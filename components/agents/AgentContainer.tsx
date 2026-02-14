@@ -72,7 +72,7 @@ function AgentContainer({ agent }: AgentContainerProps) {
           onLongPress={() =>
             router.push({
               pathname: "/edit",
-              params: { id: agent.id, name: agent.name },
+              params: { id: agent.id },
             })
           }
           style={styles.mainContent}
