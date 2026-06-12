@@ -54,7 +54,8 @@ export type AgentsSSEEvent =
       status: Service["last_status"];
       message: string;
       timestamp: Date | null;
-    };
+    }
+  | { type: "agent_removed"; agent_id: string };
 
 /**
  * Connects to the Agents SSE stream and sets up event listeners.
@@ -108,6 +109,12 @@ async function agentsSSE(
               status: event.data.status,
               message: event.data.message,
               timestamp: dateStringToDate(event.data.timestamp),
+            });
+            break;
+          case "client.agent_removed":
+            onReceiveEvent({
+              type: "agent_removed",
+              agent_id: event.data.agent_id,
             });
             break;
         }
@@ -169,9 +176,18 @@ async function getAgent(agentId: string): Promise<Agent | null> {
   return mapToAgent(response.data);
 }
 
+async function deleteAgent(agentId: string): Promise<void> {
+  const response = await client.delete(`${ENDPOINTS.agents}${agentId}/`);
+
+  if (!response.ok) {
+    throw new Error(response.problem || "Failed to delete agent");
+  }
+}
+
 export default {
   agentsSSE,
   registerAgent,
   updateAgent,
   getAgent,
+  deleteAgent,
 };

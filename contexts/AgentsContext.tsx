@@ -133,6 +133,12 @@ export const AgentsProvider: React.FC<{ children: React.ReactNode }> = ({
           ),
         );
         break;
+
+      case "agent_removed":
+        setAgents((prevAgents) =>
+          prevAgents.filter((agent) => agent.id !== event.agent_id),
+        );
+        break;
     }
   }, []);
 

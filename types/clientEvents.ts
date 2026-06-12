@@ -80,9 +80,19 @@ export interface ClientServiceStatusUpdateEvent {
   data: ClientServiceStatusUpdatePayload;
 }
 
+export interface ClientAgentRemovedPayload {
+  agent_id: string;
+}
+
+export interface ClientAgentRemovedEvent {
+  type: "client.agent_removed";
+  data: ClientAgentRemovedPayload;
+}
+
 export type ClientEvent =
   | ClientInitialStatusEvent
   | ClientStatusUpdateEvent
   | ClientServiceAddedEvent
   | ClientServiceRemovedEvent
-  | ClientServiceStatusUpdateEvent;
+  | ClientServiceStatusUpdateEvent
+  | ClientAgentRemovedEvent;

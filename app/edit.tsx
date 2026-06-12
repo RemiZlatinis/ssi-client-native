@@ -81,6 +81,8 @@ export default function EditAgentScreen() {
     }
   };
 
+  const [deleting, setDeleting] = useState(false);
+
   const handleUpdate = async () => {
     if (!agentName.trim()) {
       Alert.alert("Validation Error", "Agent name cannot be empty.");
@@ -100,6 +102,39 @@ export default function EditAgentScreen() {
       Alert.alert("Error", "Failed to save changes. Please try again.");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDelete = () => {
+    const message =
+      "Are you sure you want to remove this agent? This action is permanent and cannot be undone.";
+
+    if (Platform.OS === "web") {
+      if (window.confirm(message)) {
+        performDelete();
+      }
+    } else {
+      Alert.alert("Remove Agent", message, [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Remove",
+          style: "destructive",
+          onPress: performDelete,
+        },
+      ]);
+    }
+  };
+
+  const performDelete = async () => {
+    setDeleting(true);
+    try {
+      await api.agents.deleteAgent(id);
+      router.replace("/");
+    } catch (err) {
+      console.error("[EditAgent] Error deleting agent:", err);
+      Alert.alert("Error", "Failed to remove agent. Please try again.");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -271,9 +306,22 @@ export default function EditAgentScreen() {
           <Button
             title={saving ? "Saving..." : "Save Changes"}
             onPress={handleUpdate}
-            disabled={saving || !agentName.trim()}
+            disabled={saving || deleting || !agentName.trim()}
             style={styles.saveButton}
           />
+
+          <Pressable
+            style={[
+              styles.deleteButton,
+              (saving || deleting) && styles.deleteButtonDisabled,
+            ]}
+            onPress={handleDelete}
+            disabled={saving || deleting}
+          >
+            <Text style={styles.deleteButtonText}>
+              {deleting ? "Removing..." : "Remove Agent"}
+            </Text>
+          </Pressable>
         </View>
       </ScrollView>
     </AppScreen>
@@ -455,5 +503,27 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     marginTop: 20,
+  },
+  deleteButton: {
+    alignItems: "center",
+    alignSelf: "center",
+    borderColor: "#e18484",
+    borderWidth: 1.5,
+    borderRadius: 30,
+    height: Platform.OS === "web" ? 40 : 60,
+    justifyContent: "center",
+    maxWidth: Platform.OS === "web" ? 300 : undefined,
+    width: "100%",
+    marginTop: 16,
+    backgroundColor: "rgba(225, 132, 132, 0.08)",
+  },
+  deleteButtonDisabled: {
+    opacity: 0.5,
+  },
+  deleteButtonText: {
+    color: "#e18484",
+    fontFamily: "BrunoAce",
+    fontSize: Platform.OS === "web" ? 16 : 24,
+    textAlign: "center",
   },
 });
