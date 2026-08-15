@@ -11,6 +11,8 @@ export interface SSEConnectionOptions {
   onMessage: (data: string) => void;
 }
 
+export type SSEConnection = EventSource | WebEventSource;
+
 // Define the shape of a native EventSource for web platform
 type WebEventSource = {
   addEventListener: (
@@ -43,7 +45,7 @@ type WebEventSource = {
 export const createSSEConnection = async (
   endpoint: string,
   options: SSEConnectionOptions,
-): Promise<EventSource | WebEventSource> => {
+): Promise<SSEConnection> => {
   const URI = BASE_URL + API_PREFIX + endpoint;
 
   let es: EventSource | WebEventSource;

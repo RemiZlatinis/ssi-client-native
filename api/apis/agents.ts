@@ -1,5 +1,4 @@
-import EventSource from "react-native-sse";
-import { createSSEConnection } from "../lib/sse";
+import { createSSEConnection, SSEConnection } from "../lib/sse";
 import {
   ClientEvent,
   Agent,
@@ -65,7 +64,7 @@ async function agentsSSE(
   onClose: () => void,
   onError: (error: unknown) => void,
   onReceiveEvent: (event: AgentsSSEEvent) => void,
-): Promise<EventSource> {
+): Promise<SSEConnection> {
   return await createSSEConnection(URI["agentSSE"], {
     onOpen,
     onClose,
