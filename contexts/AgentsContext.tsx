@@ -7,11 +7,11 @@ import React, {
   useCallback,
 } from "react";
 import { AppState, AppStateStatus } from "react-native";
-import EventSource from "react-native-sse";
 import { Agent } from "@/types";
 import api from "@/api";
 import { useUser } from "./UserContext";
 import { AgentsSSEEvent } from "@/api/apis/agents";
+import { SSEConnection } from "@/api/lib/sse";
 
 interface AgentsContextType {
   agents: Agent[];
@@ -43,7 +43,7 @@ export const AgentsProvider: React.FC<{ children: React.ReactNode }> = ({
     AppState.currentState,
   );
 
-  const eventSourceRef = useRef<EventSource | null>(null);
+  const eventSourceRef = useRef<SSEConnection | null>(null);
 
   const reconnect = () => {
     setResetConnectionToggle((prev) => !prev);
