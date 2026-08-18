@@ -1,5 +1,4 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Image } from "expo-image";
 import { router } from "expo-router";
 import {
   FlatList,
@@ -11,6 +10,7 @@ import {
 
 import Button from "@/components/buttons/AppButton";
 import Text from "@/components/texts/AppText";
+import UserAvatarImage from "@/components/images/UserAvatarImage";
 import { useUser } from "@/hooks";
 import api from "@/api";
 
@@ -48,7 +48,7 @@ export default function MenuScreen() {
   return (
     <>
       <View style={styles.userContainer}>
-        <Image style={styles.userPicture} source={user?.picture} />
+        <UserAvatarImage style={styles.userPicture} picture={user?.picture} />
         <Text size={24} fontWidth="medium">
           {user?.first_name} {user?.last_name}
         </Text>

@@ -1,5 +1,4 @@
 import { FontAwesome6 } from "@expo/vector-icons";
-import { Image } from "expo-image";
 import { Link } from "expo-router";
 import {
   FlatList,
@@ -13,6 +12,7 @@ import {
 
 import AgentContainer from "@/components/agents/AgentContainer";
 import AppScreen from "@/components/containers/AppScreen";
+import UserAvatarImage from "@/components/images/UserAvatarImage";
 
 import ConnectivityStatus from "@/components/animated/ConnectivityStatus";
 import {
@@ -42,7 +42,10 @@ function OverviewScreen() {
         <View style={styles.headerItemContainer}>
           <Link href="/menu" style={styles.linkContainer}>
             {user?.picture ? (
-              <Image style={styles.userPicture} source={user.picture} />
+              <UserAvatarImage
+                style={styles.userPicture}
+                picture={user.picture}
+              />
             ) : (
               <FontAwesome6
                 name="user-circle"
