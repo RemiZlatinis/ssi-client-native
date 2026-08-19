@@ -3,12 +3,7 @@
  * Based on core.models.Service.Status
  */
 export type ServiceStatus =
-  | "OK"
-  | "WARNING"
-  | "ERROR"
-  | "UPDATE"
-  | "FAILURE"
-  | "UNKNOWN";
+  "OK" | "WARNING" | "ERROR" | "UPDATE" | "FAILURE" | "UNKNOWN";
 
 /**
  * Serializer for the Service model.

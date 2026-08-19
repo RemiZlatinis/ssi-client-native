@@ -11,9 +11,7 @@ export type AgentRegistrationStatus = "pending" | "registered" | "unregistered";
  * Based on core.models.AgentRegistration.STATUS_CHOICES
  */
 export type AgentRegistrationProcessStatus =
-  | "pending"
-  | "completed"
-  | "expired";
+  "pending" | "completed" | "expired";
 
 /**
  * Serializer for the Agent model.
