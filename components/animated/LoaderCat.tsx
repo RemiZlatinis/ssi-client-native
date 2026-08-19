@@ -1,7 +1,7 @@
 import LottieView from "lottie-react-native";
 import { useRef } from "react";
 
-const loaderCat = require("@/assets/lottie/Loader cat.json");
+const loaderCat = require("@/assets/lottie/Mufasa.json");
 
 function LoaderCat() {
   const animation = useRef<LottieView>(null);
