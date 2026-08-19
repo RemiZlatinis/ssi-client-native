@@ -4,13 +4,14 @@ import { Platform, StyleSheet, Text, useColorScheme, View } from "react-native";
 import LoaderCat from "@/components/animated/LoaderCat";
 import LoginWithGoogleButton from "@/components/buttons/LoginWithGoogleButton";
 import AppScreen from "@/components/containers/AppScreen";
-import { useUser } from "@/contexts/UserContext";
+import { useBackendAvailability, useUser } from "@/hooks";
 
 const logo = require("@/assets/images/icon.png");
 
 export default function WelcomeScreen() {
   const dark = useColorScheme() === "dark";
   const { loading } = useUser();
+  const backendAvailable = useBackendAvailability();
 
   return (
     <AppScreen style={styles.screen}>
@@ -32,6 +33,17 @@ export default function WelcomeScreen() {
         </View>
       ) : (
         <LoginWithGoogleButton />
+      )}
+      {/* Pre-auth: shows when backend is unreachable before login.
+          Post-auth: SSE disconnect covers this on the main screen. */}
+      {backendAvailable === false && (
+        <View style={styles.backendUnavailableBanner}>
+          <Text style={styles.backendUnavailableBannerText}>
+            {__DEV__
+              ? "Backend unreachable — is it running?"
+              : "Unable to connect to the server"}
+          </Text>
+        </View>
       )}
     </AppScreen>
   );
@@ -85,5 +97,19 @@ const styles = StyleSheet.create({
     color: "#84C2E1",
     fontFamily: "BrunoAce",
     fontSize: 20,
+  },
+  backendUnavailableBanner: {
+    backgroundColor: "#F59E0B",
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginTop: 20,
+    marginHorizontal: 20,
+  },
+  backendUnavailableBannerText: {
+    color: "#000",
+    fontFamily: "Poppins",
+    fontSize: 13,
+    textAlign: "center",
   },
 });
