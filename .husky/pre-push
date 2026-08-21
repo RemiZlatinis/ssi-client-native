@@ -1,3 +1,4 @@
+set -e
 command -v bun >/dev/null 2>&1 || export PATH="$HOME/.bun/bin:$PATH"
 bun run lint
 bun run typecheck
