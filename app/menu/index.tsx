@@ -1,5 +1,5 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 import {
   FlatList,
   Platform,
@@ -35,7 +35,7 @@ const menuItems = [
     icon: "information-circle-outline",
     route: null,
   },
-];
+] satisfies { id: string; title: string; icon: string; route: Href | null }[];
 
 export default function MenuScreen() {
   const { user, setUser } = useUser();
