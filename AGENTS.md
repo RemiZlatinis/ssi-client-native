@@ -9,7 +9,7 @@
 
 ### What This Repository Is
 
-- Native client application built with Expo (SDK 54)/React Native
+- Native client application built with Expo SDK/React Native (Expo SDK is usually kept on the latest stable version)
 - Displays real-time system status from backend
 - Provides alerts and status summaries to users
 - Supports Android, iOS, and Web platforms
