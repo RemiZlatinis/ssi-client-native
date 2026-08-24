@@ -17,8 +17,6 @@ const ENDPOINTS = {
   "login-provider-redirect": `${BASE_URL + API_PREFIX}browser/v1/auth/provider/redirect`,
 };
 
-// Configure the SignIn API to use the App's Web client ID
-// We need the Web client because: ...
 GoogleSignin.configure({
   webClientId: GOOGLE_WEB_CLIENT_ID,
 });
