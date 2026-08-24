@@ -1,0 +1,229 @@
+name: Android Preview
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "LICENSE"
+  workflow_dispatch:
+
+concurrency:
+  group: android-preview-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    name: Android preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Setup bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: 1.2.0
+
+      - name: Setup Node
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 20
+
+      - name: Setup Java
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4
+
+      - name: Setup Expo & EAS
+        uses: expo/expo-github-action@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8
+        with:
+          eas-version: 22.2.0
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Cache Gradle
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      # Advisory only, matching EAS cloud builds where doctor never fails the job.
+      # Surface the result in the Job Summary so reviewers don't have to open the step log.
+      - name: Run expo doctor
+        id: doctor
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          npx expo-doctor@1.20.3 2>&1 | tee doctor.log
+
+      - name: Surface expo-doctor result
+        if: always()
+        run: |
+          if [ "${{ steps.doctor.outcome }}" = "success" ]; then
+            {
+              echo "### ✅ expo-doctor — advisory"
+              echo ""
+              echo "All checks passed."
+            } >> "$GITHUB_STEP_SUMMARY"
+          elif [ "${{ steps.doctor.outcome }}" = "failure" ]; then
+            echo "::warning title=expo-doctor::expo-doctor found issues — see Job Summary for details"
+            {
+              echo "### ⚠️ expo-doctor — advisory"
+              echo ""
+              echo "<details><summary>expo-doctor failed — see log below (no update required in this PR)</summary>"
+              echo ""
+              echo '```'
+              cat doctor.log
+              echo '```'
+              echo "</details>"
+              echo ""
+              echo "_Advice: run \`npx expo install --check\` locally; bundle drift in its own \`chore(deps)\` PR._"
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            {
+              echo "### ⚪ expo-doctor — skipped"
+              echo ""
+              echo "Doctor skipped (earlier step failed) — see logs."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # Materialize the Firebase config from the repository secret. The file
+      # stays out of git and reaches the build through the GOOGLE_SERVICES_JSON
+      # environment variable (see app.config.js). Fork PRs have no secret
+      # access and fall back to a placeholder, producing an APK whose push
+      # notifications are inactive.
+      - name: Create google-services.json
+        env:
+          FIREBASE_CONFIG: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          if [ -n "$FIREBASE_CONFIG" ]; then
+            printf '%s' "$FIREBASE_CONFIG" > google-services.json
+            echo "google-services.json created from repository secret"
+          else
+            cat > google-services.json << 'JSON'
+          {
+            "project_info": {
+              "project_number": "0",
+              "project_id": "dummy-project"
+            },
+            "client": [
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:0:android:dummy",
+                  "package_name": "com.remizlatinis.ssiclientmobile"
+                },
+                "oauth_client": [],
+                "api_key": [{ "current_key": "dummy" }],
+                "services": { "appinvite_service": { "other_platform_oauth_client": [] } }
+              }
+            ],
+            "configuration_version": "1"
+          }
+          JSON
+            echo "Placeholder google-services.json used (secret not available)"
+          fi
+          ls -lh google-services.json
+
+      # Resolve EXPO_PUBLIC_* from repository secrets into the environment for
+      # later steps. Authenticated builds require them; forks without secret
+      # access continue with placeholders so their APK stays installable.
+      - name: Resolve app configuration
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          BACKEND_URL: ${{ secrets.EXPO_PUBLIC_BACKEND_URL }}
+          CLIENT_ID: ${{ secrets.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID }}
+        run: |
+          set -euo pipefail
+          if [ -z "$BACKEND_URL" ] || [ -z "$CLIENT_ID" ]; then
+            if [ -n "$EXPO_TOKEN" ]; then
+              echo "::error::Set the EXPO_PUBLIC_BACKEND_URL and EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID repository secrets"
+              exit 1
+            fi
+            echo "::warning::App configuration secrets unavailable; building with placeholders"
+          fi
+          {
+            echo "EXPO_PUBLIC_BACKEND_URL=${BACKEND_URL:-https://example.com/}"
+            echo "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=${CLIENT_ID:-placeholder.apps.googleusercontent.com}"
+          } >> "$GITHUB_ENV"
+
+      # Fork PRs run without EXPO_TOKEN: remote app versioning and the EAS
+      # environment lookup both require authentication, so switch those off
+      # and rely on locally injected values.
+      - name: Prepare eas.json for unauthenticated builds
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            jq '.cli.appVersionSource = "local" | del(.build.preview.environment)' eas.json > eas.json.tmp && mv eas.json.tmp eas.json
+          fi
+
+      - name: Build APK
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          GOOGLE_SERVICES_JSON: ${{ github.workspace }}/google-services.json
+        run: |
+          eas build --platform android --profile preview --local --non-interactive --output ./app-preview.apk
+          ls -lh ./app-preview.apk
+
+      # APKs are already zip-compressed; level 0 skips a wasteful recompression.
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: android-preview-apk
+          path: ./app-preview.apk
+          retention-days: 7
+          if-no-files-found: error
+          compression-level: 0
+
+      - name: Job summary
+        if: always()
+        run: |
+          if [ -f ./app-preview.apk ]; then
+            {
+              echo "### 📱 Android Preview APK"
+              echo ""
+              echo "| | |"
+              echo "| --- | --- |"
+              echo "| Size | $(du -h ./app-preview.apk | cut -f1) |"
+              echo "| Profile | \`preview\` (APK, internal distribution) |"
+              echo "| Artifact | \`android-preview-apk\`, kept for 7 days |"
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # Comment attempts are best-effort: fork PRs run with a read-only token
+      # and cannot post comments, which must not fail an otherwise green build.
+      # Uses a sticky header so every push updates one comment instead of spamming the thread.
+      - name: Comment on PR (build finished)
+        if: github.event_name == 'pull_request' && success()
+        continue-on-error: true
+        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
+        with:
+          header: android-preview-apk
+          message: |
+            📱 **Android Preview APK** is ready.
+
+            Download from ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} — **Artifacts** → `android-preview-apk` (kept for 7 days).
+
+      - name: Comment on PR (build failed)
+        if: github.event_name == 'pull_request' && failure()
+        continue-on-error: true
+        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
+        with:
+          header: android-preview-apk
+          message: |
+            ⚠️ **Android Preview APK** build failed — see logs at ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}.
