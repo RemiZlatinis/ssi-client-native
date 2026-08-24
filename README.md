@@ -86,7 +86,7 @@ These run automatically in CI (`.github/workflows/ci.yml`) on every push to `mai
 
 ### Android Preview Builds
 
-Every pull request targeting `main` automatically builds an installable **Android preview APK** (`.github/workflows/android-preview.yml`; docs-only changes are skipped, manual runs via the Actions tab). The APK is uploaded as a workflow artifact (kept for 7 days) and linked from a PR comment — install it to test the changes before merge. Fork PRs build with placeholder configuration (Firebase, backend URL), so push notifications and backend connectivity are inactive there.
+Every pull request targeting `main` automatically builds an installable **Android preview APK** (`.github/workflows/android-preview.yml`; docs-only changes are skipped, manual runs via the Actions tab). The APK is uploaded as a workflow artifact (kept for 7 days) and linked from a PR comment — install it to test the changes before merge. Fork PRs skip the Android build entirely: `eas build --local` requires Expo authentication, which forks cannot access.
 
 ### Architecture Notes for Contributors
 

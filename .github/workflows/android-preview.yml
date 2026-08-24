@@ -104,9 +104,9 @@ jobs:
 
       # Materialize the Firebase config from the repository secret. The file
       # stays out of git and reaches the build through the GOOGLE_SERVICES_JSON
-      # environment variable (see app.config.js). Fork PRs have no secret
-      # access and fall back to a placeholder, producing an APK whose push
-      # notifications are inactive.
+      # environment variable (see app.config.js). A placeholder keeps the
+      # config shape valid when the secret is unavailable; fork PRs skip the
+      # build entirely (see the gate below).
       - name: Create google-services.json
         env:
           FIREBASE_CONFIG: ${{ secrets.GOOGLE_SERVICES_JSON }}
@@ -140,8 +140,8 @@ jobs:
           ls -lh google-services.json
 
       # Resolve EXPO_PUBLIC_* from repository secrets into the environment for
-      # later steps. Authenticated builds require them; forks without secret
-      # access continue with placeholders so their APK stays installable.
+      # later steps. Credentialed builds require them; tokenless contexts fall
+      # back to placeholders and never reach the gated build below.
       - name: Resolve app configuration
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
@@ -161,18 +161,27 @@ jobs:
             echo "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=${CLIENT_ID:-placeholder.apps.googleusercontent.com}"
           } >> "$GITHUB_ENV"
 
-      # Fork PRs run without EXPO_TOKEN: remote app versioning and the EAS
-      # environment lookup both require authentication, so switch those off
-      # and rely on locally injected values.
-      - name: Prepare eas.json for unauthenticated builds
+      # eas build --local requires an authenticated Expo session even for
+      # fully-local builds (credentials and remote config resolve against Expo
+      # servers), and forks never receive secrets. Verified against
+      # eas-cli 22.2.0: a logged-out invocation aborts with "An Expo user
+      # account is required to proceed." Gate the build so fork PRs end in a
+      # clean, intentional skip instead of a red failure inside eas-cli.
+      - name: Gate EAS build on credentials
+        id: gate
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
-          if [ -z "$EXPO_TOKEN" ]; then
-            jq '.cli.appVersionSource = "local" | del(.build.preview.environment)' eas.json > eas.json.tmp && mv eas.json.tmp eas.json
+          set -euo pipefail
+          if [ -n "$EXPO_TOKEN" ]; then
+            echo "eas_build=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice title=EAS build skipped::eas build --local requires authentication; forks run without secrets"
+            echo "eas_build=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Build APK
+        if: steps.gate.outputs.eas_build == 'true'
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           GOOGLE_SERVICES_JSON: ${{ github.workspace }}/google-services.json
@@ -182,6 +191,7 @@ jobs:
 
       # APKs are already zip-compressed; level 0 skips a wasteful recompression.
       - name: Upload APK artifact
+        if: steps.gate.outputs.eas_build == 'true'
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: android-preview-apk
@@ -192,6 +202,8 @@ jobs:
 
       - name: Job summary
         if: always()
+        env:
+          EAS_BUILD: ${{ steps.gate.outputs.eas_build }}
         run: |
           if [ -f ./app-preview.apk ]; then
             {
@@ -203,13 +215,19 @@ jobs:
               echo "| Profile | \`preview\` (APK, internal distribution) |"
               echo "| Artifact | \`android-preview-apk\`, kept for 7 days |"
             } >> "$GITHUB_STEP_SUMMARY"
+          elif [ "$EAS_BUILD" = "false" ]; then
+            {
+              echo "### ⚪ Android Preview APK — skipped (fork PR)"
+              echo ""
+              echo "\`eas build --local\` requires Expo authentication; forks run without secrets."
+            } >> "$GITHUB_STEP_SUMMARY"
           fi
 
       # Comment attempts are best-effort: fork PRs run with a read-only token
       # and cannot post comments, which must not fail an otherwise green build.
       # Uses a sticky header so every push updates one comment instead of spamming the thread.
       - name: Comment on PR (build finished)
-        if: github.event_name == 'pull_request' && success()
+        if: github.event_name == 'pull_request' && success() && steps.gate.outputs.eas_build == 'true'
         continue-on-error: true
         uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
         with:
