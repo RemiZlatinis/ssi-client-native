@@ -203,7 +203,7 @@ Optional extended body:
 ```
 
 **Types**: `feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `perf`  
-**Scopes**: `screens`, `components`, `api`, `navigation`, `auth`, `notifications`
+**Scopes**: `screens`, `components`, `api`, `navigation`, `auth`, `notifications`, `deps`
 
 ---
 
