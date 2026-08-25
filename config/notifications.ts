@@ -20,7 +20,6 @@ export const ANDROID_CHANNELS: AppNotificationChannel[] = [
     name: "Agent Status",
     description: "Notifications for Agent online/offline status changes.",
     importance: Notifications.AndroidImportance.DEFAULT,
-    sound: "default",
     enableVibrate: false,
     enableLights: false,
     bypassDnd: false,
@@ -32,7 +31,6 @@ export const ANDROID_CHANNELS: AppNotificationChannel[] = [
     name: "Service: OK",
     description: "Information or regular stage updates.",
     importance: Notifications.AndroidImportance.DEFAULT,
-    sound: "default",
     enableVibrate: false,
     enableLights: true,
     lightColor: "#158633ff", // Green
@@ -45,7 +43,6 @@ export const ANDROID_CHANNELS: AppNotificationChannel[] = [
     name: "Service: Update",
     description: "Information about updates.",
     importance: Notifications.AndroidImportance.HIGH, // Slightly more important
-    sound: "default",
     enableVibrate: true,
     vibrationPattern: [0, 250, 250, 250],
     enableLights: true,
@@ -59,7 +56,6 @@ export const ANDROID_CHANNELS: AppNotificationChannel[] = [
     name: "Service: Warning",
     description: "Warning notifications.",
     importance: Notifications.AndroidImportance.HIGH, // Slightly more important than update (same tier, but distinct channel)
-    sound: "default",
     enableVibrate: true,
     vibrationPattern: [0, 500, 200, 500],
     enableLights: true,
@@ -73,7 +69,6 @@ export const ANDROID_CHANNELS: AppNotificationChannel[] = [
     name: "Service: Failure",
     description: "Failure notifications. User must know.",
     importance: Notifications.AndroidImportance.MAX, // Priority at max
-    sound: "default",
     enableVibrate: true,
     vibrationPattern: [0, 1000, 500, 1000],
     enableLights: true,
@@ -87,7 +82,6 @@ export const ANDROID_CHANNELS: AppNotificationChannel[] = [
     name: "Service: Error",
     description: "Runtime error notifications.",
     importance: Notifications.AndroidImportance.MAX, // Priority at max
-    sound: "default",
     enableVibrate: true,
     vibrationPattern: [0, 1000, 500, 1000],
     enableLights: true,
@@ -101,7 +95,6 @@ export const ANDROID_CHANNELS: AppNotificationChannel[] = [
     name: "Service: Unknown",
     description: "Unknown status notifications.",
     importance: Notifications.AndroidImportance.DEFAULT,
-    sound: "default",
     enableVibrate: false,
     enableLights: true,
     lightColor: "#8d989fff", // Grey

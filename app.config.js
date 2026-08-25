@@ -8,7 +8,6 @@ export default {
     icon: "./assets/images/icon.png",
     scheme: "ssiclientmobile",
     userInterfaceStyle: "automatic",
-    newArchEnabled: true,
     ios: {
       supportsTablet: true,
       userInterfaceStyle: "automatic",
@@ -35,6 +34,8 @@ export default {
       "expo-router",
       "expo-font",
       "expo-web-browser",
+      "expo-image",
+      "expo-status-bar",
       [
         "expo-secure-store",
         {
@@ -61,6 +62,7 @@ export default {
     ],
     experiments: {
       typedRoutes: true,
+      reactCompiler: true,
     },
     extra: {
       router: {},
